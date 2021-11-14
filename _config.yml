@@ -13,7 +13,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://caixukun8.top
+url: http://zhang.kim
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -79,11 +79,10 @@ theme: hexo-theme-next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:JinMing8/JinMing8.github.io.git
+  repository: git@github.com:KimZhangJinMing/KimZhangJinMing.github.io.git
   branch: master
 
 symbols_count_time:
  #文章内是否显示
   symbols: true
   time: true
- 
