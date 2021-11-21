@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Slippers_32x32.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Slippers_16x16.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("http://xxxxxxx.xxx"); // 这里替换成你的首页地址
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+
+  <meta name="description" content="volatile保证可见性，不保证原子性 volatile强制线程到共享内存中读取数据，而不从线程工作内存中读取，从而使变量在多个线程中可见 volatile无法保证原子性，volatile属于轻量级的同步，性能比synchronized强很多(不加锁)，但是只 保证线程见的可见性，并不能替代synchronized的同步功能，netty框架中大量使用了volatile   栗子1：volatil">
+<meta name="keywords" content="JUC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="volatile.md">
+<meta property="og:url" content="http://www.zhang.kim/2020/08/10/并发/进阶篇/volatile/index.html">
+<meta property="og:site_name" content="kim.zhang">
+<meta property="og:description" content="volatile保证可见性，不保证原子性 volatile强制线程到共享内存中读取数据，而不从线程工作内存中读取，从而使变量在多个线程中可见 volatile无法保证原子性，volatile属于轻量级的同步，性能比synchronized强很多(不加锁)，但是只 保证线程见的可见性，并不能替代synchronized的同步功能，netty框架中大量使用了volatile   栗子1：volatil">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="d:/ming/images/image-20200626214300170.png">
+<meta property="og:updated_time" content="2021-11-21T04:56:33.451Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="volatile.md">
+<meta name="twitter:description" content="volatile保证可见性，不保证原子性 volatile强制线程到共享内存中读取数据，而不从线程工作内存中读取，从而使变量在多个线程中可见 volatile无法保证原子性，volatile属于轻量级的同步，性能比synchronized强很多(不加锁)，但是只 保证线程见的可见性，并不能替代synchronized的同步功能，netty框架中大量使用了volatile   栗子1：volatil">
+<meta name="twitter:image" content="d:/ming/images/image-20200626214300170.png">
+  <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/进阶篇/volatile/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>volatile.md | kim.zhang</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kim.zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">风在前，无惧!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhang.kim/2020/08/10/并发/进阶篇/volatile/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim.Zhang">
+      <meta itemprop="description" content="且行且珍惜">
+      <meta itemprop="image" content="/images/1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kim.zhang">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">volatile.md
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-08-10 22:46:35" itemprop="dateCreated datePublished" datetime="2020-08-10T22:46:35+08:00">2020-08-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 12:56:33" itemprop="dateModified" datetime="2021-11-21T12:56:33+08:00">2021-11-21</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/并发/" itemprop="url" rel="index"><span itemprop="name">并发</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>6.5k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>6 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="volatile保证可见性，不保证原子性"><a href="#volatile保证可见性，不保证原子性" class="headerlink" title="volatile保证可见性，不保证原子性"></a>volatile保证可见性，不保证原子性</h3><ul>
+<li>volatile强制线程到共享内存中读取数据，而不从线程工作内存中读取，从而使变量在多个线程中可见</li>
+<li>volatile无法保证原子性，volatile属于轻量级的同步，性能比synchronized强很多(不加锁)，但是只 保证线程见的可见性，并不能替代synchronized的同步功能，netty框架中大量使用了volatile </li>
+</ul>
+<h4 id="栗子1：volatile不能保证原子性"><a href="#栗子1：volatile不能保证原子性" class="headerlink" title="栗子1：volatile不能保证原子性"></a>栗子1：volatile不能保证原子性</h4><p>sum属性加了volatile关键字</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo14</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Integer sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;初始sum=&quot;</span> + sum);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            sum++;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;计算后sum=&quot;</span> + sum);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        add();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//如果volatile具有原子性,那么10个线程并发调用，最终结果应该为100000</span></span><br><span class="line">        ExecutorService es = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            es.submit(<span class="keyword">new</span> ThreadDemo14());</span><br><span class="line">        &#125;</span><br><span class="line">        es.shutdown();</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (es.isTerminated()) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;sum最终=&quot;</span> + sum);</span><br><span class="line">                <span class="keyword">if</span> (sum == <span class="number">100000</span>) &#123;</span><br><span class="line">                    System.out.println(sum + <span class="string">&quot;=ok&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    System.out.println(sum + <span class="string">&quot;=no&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果:</p>
+<p>多次运行可能结果都不一样。因为volatile不能保证原子性，可能线程A把sum改变了，还没来得及设置回主内存，又被其他线程给读取了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">pool-<span class="number">1</span>-thread-<span class="number">1</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">3</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">2</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">5</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">3</span>计算后sum=<span class="number">4486</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">1</span>计算后sum=<span class="number">6411</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">4</span>初始sum=<span class="number">7627</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">2</span>计算后sum=<span class="number">9046</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">6</span>初始sum=<span class="number">14162</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">7</span>初始sum=<span class="number">17079</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">4</span>计算后sum=<span class="number">19511</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">8</span>初始sum=<span class="number">21795</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">5</span>计算后sum=<span class="number">24844</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">6</span>计算后sum=<span class="number">26518</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">9</span>初始sum=<span class="number">28104</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">10</span>初始sum=<span class="number">29595</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">8</span>计算后sum=<span class="number">33121</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">7</span>计算后sum=<span class="number">33111</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">9</span>计算后sum=<span class="number">41465</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">10</span>计算后sum=<span class="number">42512</span></span><br><span class="line">sum最终=<span class="number">42512</span></span><br><span class="line"><span class="number">42512</span>=no</span><br></pre></td></tr></table></figure>
+
+<h3 id="volatile与static区别"><a href="#volatile与static区别" class="headerlink" title="volatile与static区别"></a>volatile与static区别</h3><ul>
+<li>static保证唯一性，不保证一致性，多个实例共享一个静态变量</li>
+<li>volatile保证一致性，不保证唯一性，多个实例有多个volatile变量</li>
+</ul>
+<h3 id="Atomic类的原子性"><a href="#Atomic类的原子性" class="headerlink" title="Atomic类的原子性"></a>Atomic类的原子性</h3><p>==<strong>Actomic类采用了CAS这种非锁机制</strong>==</p>
+<h4 id="栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性"><a href="#栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性" class="headerlink" title="栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性"></a>栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo14</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> AtomicInteger sum = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;初始sum=&quot;</span> + sum);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            sum.addAndGet(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;计算后sum=&quot;</span> + sum);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        add();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//如果volatile具有原子性,那么10个线程并发调用，最终结果应该为100000</span></span><br><span class="line">        ExecutorService es = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            es.submit(<span class="keyword">new</span> ThreadDemo14());</span><br><span class="line">        &#125;</span><br><span class="line">        es.shutdown();</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (es.isTerminated()) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;sum最终=&quot;</span> + sum);</span><br><span class="line">                <span class="keyword">if</span> (sum.get() == <span class="number">100000</span>) &#123;</span><br><span class="line">                    System.out.println(sum + <span class="string">&quot;=ok&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    System.out.println(sum + <span class="string">&quot;=no&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>不管运行多少次，结果都是正确的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">pool-<span class="number">1</span>-thread-<span class="number">1</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">3</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">2</span>初始sum=<span class="number">0</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">5</span>初始sum=<span class="number">14727</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">10</span>初始sum=<span class="number">19921</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">3</span>计算后sum=<span class="number">26493</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">6</span>初始sum=<span class="number">32980</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">1</span>计算后sum=<span class="number">35974</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">2</span>计算后sum=<span class="number">41300</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">4</span>初始sum=<span class="number">54770</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">10</span>计算后sum=<span class="number">56532</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">6</span>计算后sum=<span class="number">59183</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">7</span>初始sum=<span class="number">60117</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">8</span>初始sum=<span class="number">61625</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">5</span>计算后sum=<span class="number">68908</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">9</span>初始sum=<span class="number">79628</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">4</span>计算后sum=<span class="number">82182</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">7</span>计算后sum=<span class="number">92269</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">8</span>计算后sum=<span class="number">95401</span></span><br><span class="line">pool-<span class="number">1</span>-thread-<span class="number">9</span>计算后sum=<span class="number">100000</span></span><br><span class="line">sum最终=<span class="number">100000</span></span><br><span class="line"><span class="number">100000</span>=ok</span><br></pre></td></tr></table></figure>
+
+<h4 id="栗子2：-Atomic类不能保证成员方法的原子性"><a href="#栗子2：-Atomic类不能保证成员方法的原子性" class="headerlink" title="栗子2： Atomic类不能保证成员方法的原子性"></a>栗子2： Atomic类不能保证成员方法的原子性</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo15</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="comment">//原子类</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger sum = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果add方法是原子性的,那么每次的结果都是10的整数倍</span></span><br><span class="line">    <span class="comment">// synchronized加锁可以保证原子性</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        sum.addAndGet(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        sum.addAndGet(<span class="number">9</span>);</span><br><span class="line">        System.out.println(sum);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        add();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//10个线程调用，每个线程得到10的倍数， 最终结果应该为100，才是正确的</span></span><br><span class="line">        ExecutorService es = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            es.submit(<span class="keyword">new</span> ThreadDemo15());</span><br><span class="line">        &#125;</span><br><span class="line">        es.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">28</span></span><br><span class="line"><span class="number">100</span></span><br><span class="line"><span class="number">91</span></span><br><span class="line"><span class="number">82</span></span><br><span class="line"><span class="number">37</span></span><br><span class="line"><span class="number">73</span></span><br><span class="line"><span class="number">64</span></span><br><span class="line"><span class="number">55</span></span><br><span class="line"><span class="number">46</span></span><br><span class="line"><span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+<p>使用synchronized可以保证方法的原子性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sum.addAndGet(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    sum.addAndGet(<span class="number">9</span>);</span><br><span class="line">    System.out.println(sum);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">20</span></span><br><span class="line"><span class="number">30</span></span><br><span class="line"><span class="number">40</span></span><br><span class="line"><span class="number">50</span></span><br><span class="line"><span class="number">60</span></span><br><span class="line"><span class="number">70</span></span><br><span class="line"><span class="number">80</span></span><br><span class="line"><span class="number">90</span></span><br><span class="line"><span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="CAS（Compare-and-swap）"><a href="#CAS（Compare-and-swap）" class="headerlink" title="CAS（Compare and swap）"></a>CAS（Compare and swap）</h3><ul>
+<li> JDK提供的非阻塞原子操作，通过硬件保证了比较、更新操作的原子性 </li>
+<li>JDK的Unsafe类提供了一系列的compareAndSwap*方法来支持CAS操作</li>
+</ul>
+<h4 id="解决ABA问题："><a href="#解决ABA问题：" class="headerlink" title="解决ABA问题："></a>解决ABA问题：</h4><ul>
+<li>给变量分配时间戳、版本来解决ABA问题</li>
+<li>JDK中使用java.util.concurrent.atomic.AtomicStampedReference类给每个变量的状态都分配一个时间 戳，避免ABA问题产生。</li>
+</ul>
+<h4 id="栗子1：ABA问题"><a href="#栗子1：ABA问题" class="headerlink" title="栗子1：ABA问题"></a>栗子1：ABA问题</h4><p><img src="D:\ming\images\image-20200626214300170.png" alt="image-20200626214300170"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CasDemo0</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicStampedReference&lt;Integer&gt; atomic = <span class="keyword">new</span> AtomicStampedReference&lt;&gt;(<span class="number">100</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Thread t0 = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">boolean</span> sucess = atomic.compareAndSet(<span class="number">100</span>, <span class="number">101</span>, atomic.getStamp(), atomic.getStamp() + <span class="number">1</span>);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; set 100&gt;101 : &quot;</span> + sucess);</span><br><span class="line">                sucess = atomic.compareAndSet(<span class="number">101</span>, <span class="number">100</span>, atomic.getStamp(), atomic.getStamp() + <span class="number">1</span>);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; set 101&gt;100 : &quot;</span> + sucess);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        t0.start();</span><br><span class="line"></span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> stamp = atomic.getStamp();</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; 修改之前 : &quot;</span> + stamp);</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">                <span class="keyword">int</span> stamp1 = atomic.getStamp();</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; 等待两秒之后,版本被t0线程修改为 : &quot;</span> + stamp1);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 以下两次修改都不会成功,因为版本不符,虽然期待值是相同的,因此解决了ABA问题</span></span><br><span class="line">                <span class="keyword">boolean</span> success = atomic.compareAndSet(<span class="number">100</span>, <span class="number">101</span>, stamp, stamp + <span class="number">1</span>);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; set 100&gt;101 使用错误的时间戳: &quot;</span> + success);</span><br><span class="line">                success = atomic.compareAndSet(<span class="number">101</span>, <span class="number">100</span>, stamp, stamp + <span class="number">1</span>);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; set 101&gt;100 使用错误的时间戳: &quot;</span> + success);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 以下修改是成功的,因为使用了正确的版本号,正确的期待值</span></span><br><span class="line">                success = atomic.compareAndSet(<span class="number">100</span>, <span class="number">101</span>, stamp1, stamp1 + <span class="number">1</span>);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot; set 100&gt;101 使用正确的时间戳: &quot;</span> + success);</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        t1.start();</span><br><span class="line"></span><br><span class="line">        t0.join();</span><br><span class="line">        t1.join();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;main is over&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Thread-<span class="number">1</span> 修改之前 : <span class="number">0</span></span><br><span class="line">Thread-<span class="number">0</span> set <span class="number">100</span>&gt;<span class="number">101</span> : <span class="keyword">true</span></span><br><span class="line">Thread-<span class="number">0</span> set <span class="number">101</span>&gt;<span class="number">100</span> : <span class="keyword">true</span></span><br><span class="line">Thread-<span class="number">1</span> 等待两秒之后,版本被t0线程修改为 : <span class="number">2</span></span><br><span class="line">Thread-<span class="number">1</span> set <span class="number">100</span>&gt;<span class="number">101</span> 使用错误的时间戳: <span class="keyword">false</span></span><br><span class="line">Thread-<span class="number">1</span> set <span class="number">101</span>&gt;<span class="number">100</span> 使用错误的时间戳: <span class="keyword">false</span></span><br><span class="line">Thread-<span class="number">1</span> set <span class="number">100</span>&gt;<span class="number">101</span> 使用正确的时间戳: <span class="keyword">true</span></span><br><span class="line">main is over</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>一毛也是爱~</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="Kim.Zhang 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/JUC/" rel="tag"># JUC</a>
+            
+          </div>
+        
+
+        
+  <div class="post-widgets">
+    <div class="social-share">
+      
+      
+        <div id="needsharebutton-postbottom">
+          <span class="btn">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </span>
+        </div>
+      
+    </div>
+  
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/08/10/并发/进阶篇/单例模式/" rel="next" title="单例模式.md">
+                  <i class="fa fa-chevron-left"></i> 单例模式.md
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/08/10/并发/进阶篇/unSafe/" rel="prev" title="Unsafe.md">
+                  Unsafe.md <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/1.jpg"
+      alt="Kim.Zhang">
+  <p class="site-author-name" itemprop="name">Kim.Zhang</p>
+  <div class="site-description motion-element" itemprop="description">且行且珍惜</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:woshizhangjinming@vip.qq.com" title="E-Mail &rarr; mailto:woshizhangjinming@vip.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/6196561949" title="Weibo &rarr; https://weibo.com/6196561949" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile保证可见性，不保证原子性"><span class="nav-number">1.</span> <span class="nav-text">volatile保证可见性，不保证原子性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：volatile不能保证原子性"><span class="nav-number">1.1.</span> <span class="nav-text">栗子1：volatile不能保证原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile与static区别"><span class="nav-number">2.</span> <span class="nav-text">volatile与static区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Atomic类的原子性"><span class="nav-number">3.</span> <span class="nav-text">Atomic类的原子性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性"><span class="nav-number">3.1.</span> <span class="nav-text">栗子1：使用AtomicInteger等原子类可以保证共享变量的原子性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子2：-Atomic类不能保证成员方法的原子性"><span class="nav-number">3.2.</span> <span class="nav-text">栗子2： Atomic类不能保证成员方法的原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAS（Compare-and-swap）"><span class="nav-number">4.</span> <span class="nav-text">CAS（Compare and swap）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解决ABA问题："><span class="nav-number">4.1.</span> <span class="nav-text">解决ABA问题：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：ABA问题"><span class="nav-number">4.2.</span> <span class="nav-text">栗子1：ABA问题</span></a></li></ol></li></ol></div>
+            
+
+            
+            
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+
+    </div>
+  </aside>
+  
+  
+
+  <div id="sidebar-dimmer"></div>
+ 
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim.Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">574k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:42</span>
+</div>
+
+
+<div class="busuanzi-count">
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      本站总访问量 
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv">4</span>
+    </span>
+    <span> 次 </span>
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      有 
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv">309</span>
+    </span>
+    <span> 人看我的博客啦 </span>
+  <span class="post-meta-divider">|</span>
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共161k字</span>
+</div>
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/08/2019 14:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+
+
+  
+  
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+
+    
+  
+  <div id="needsharebutton-float">
+    <span class="btn">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+<script src="/lib/needsharebutton/needsharebutton.js"></script>
+<script>
+    pbOptions = {};
+      pbOptions.iconStyle = "box";
+    
+      pbOptions.boxForm = "horizontal";
+    
+      pbOptions.position = "bottomCenter";
+    
+      pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-postbottom', pbOptions);
+    flOptions = {};
+      flOptions.iconStyle = "box";
+    
+      flOptions.boxForm = "horizontal";
+    
+      flOptions.position = "middleRight";
+    
+      flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-float', flOptions);
+</script>
+
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  if (CONFIG.page.isPost) {
+    bookmark.scrollToMark('auto', "#更多");
+  } else {
+    bookmark.loadBookmark();
+  }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+</body>
+<script type="text/javascript" src="/js/clicklove.js"></script>
+</html>

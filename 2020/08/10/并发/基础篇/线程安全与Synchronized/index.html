@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Slippers_32x32.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Slippers_16x16.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("http://xxxxxxx.xxx"); // 这里替换成你的首页地址
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+
+  <meta name="description" content="什么是线程安全 当多个线程访问某一个类、对象或方法时，这个类、对象或方法都能表现出与单线程执行时一致的行为，那么这个类、对象或方法就是线程安全的 线程安全问题都是由全局变量（成员变量）以及静态变量引起的 若每个线程中对全局变量、静态变量只有读操作，没有写操作，一般来说，这个全局变量是线程安全的。若有多个线程同时执行写操作，一般都需要考虑线程同步，否则就有可能影响线程安全  需要考虑线程安全的情况">
+<meta name="keywords" content="并发基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="synchronized.md">
+<meta property="og:url" content="http://www.zhang.kim/2020/08/10/并发/基础篇/线程安全与Synchronized/index.html">
+<meta property="og:site_name" content="kim.zhang">
+<meta property="og:description" content="什么是线程安全 当多个线程访问某一个类、对象或方法时，这个类、对象或方法都能表现出与单线程执行时一致的行为，那么这个类、对象或方法就是线程安全的 线程安全问题都是由全局变量（成员变量）以及静态变量引起的 若每个线程中对全局变量、静态变量只有读操作，没有写操作，一般来说，这个全局变量是线程安全的。若有多个线程同时执行写操作，一般都需要考虑线程同步，否则就有可能影响线程安全  需要考虑线程安全的情况">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-11-21T04:56:33.449Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="synchronized.md">
+<meta name="twitter:description" content="什么是线程安全 当多个线程访问某一个类、对象或方法时，这个类、对象或方法都能表现出与单线程执行时一致的行为，那么这个类、对象或方法就是线程安全的 线程安全问题都是由全局变量（成员变量）以及静态变量引起的 若每个线程中对全局变量、静态变量只有读操作，没有写操作，一般来说，这个全局变量是线程安全的。若有多个线程同时执行写操作，一般都需要考虑线程同步，否则就有可能影响线程安全  需要考虑线程安全的情况">
+  <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/基础篇/线程安全与Synchronized/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>synchronized.md | kim.zhang</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kim.zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">风在前，无惧!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhang.kim/2020/08/10/并发/基础篇/线程安全与Synchronized/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim.Zhang">
+      <meta itemprop="description" content="且行且珍惜">
+      <meta itemprop="image" content="/images/1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kim.zhang">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">synchronized.md
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-08-10 22:46:35" itemprop="dateCreated datePublished" datetime="2020-08-10T22:46:35+08:00">2020-08-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 12:56:33" itemprop="dateModified" datetime="2021-11-21T12:56:33+08:00">2021-11-21</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/并发/" itemprop="url" rel="index"><span itemprop="name">并发</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>20k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>19 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="什么是线程安全"><a href="#什么是线程安全" class="headerlink" title="什么是线程安全"></a>什么是线程安全</h3><ul>
+<li>当多个线程访问某一个类、对象或方法时，这个类、对象或方法都能表现出与单线程执行时一致的行为，那么这个类、对象或方法就是线程安全的</li>
+<li>线程安全问题都是由全局变量（成员变量）以及静态变量引起的</li>
+<li>若每个线程中对全局变量、静态变量只有读操作，没有写操作，一般来说，这个全局变量是线程安全的。若有多个线程同时执行写操作，一般都需要考虑线程同步，否则就有可能影响线程安全</li>
+</ul>
+<h3 id="需要考虑线程安全的情况"><a href="#需要考虑线程安全的情况" class="headerlink" title="需要考虑线程安全的情况"></a>需要考虑线程安全的情况</h3><ul>
+<li>访问共享的变量或资源，会有并发风险，比如对象的属性、静态变量、共享缓存、数据库等</li>
+<li>check-then-act操作：一个线程读取了一个共享数据，并在此基础上决定其下一个的操作</li>
+<li>不同的数据之间存在捆绑关系的时候</li>
+<li>我们使用其他类的时候，如果对方没有声明自己是线程安全的，那么大概率会存在并发问题</li>
+</ul>
+<h4 id="栗子1：多个线程a-导致的线程安全问题"><a href="#栗子1：多个线程a-导致的线程安全问题" class="headerlink" title="栗子1：多个线程a++导致的线程安全问题"></a>栗子1：多个线程a++导致的线程安全问题</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SumError</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SumError instance = <span class="keyword">new</span> SumError();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 记录1-10000有哪一次是计算出错的，默认值为false</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span>[] marked = <span class="keyword">new</span> <span class="keyword">boolean</span>[<span class="number">20001</span>];</span><br><span class="line">    <span class="comment">// 记录真正执行的次数</span></span><br><span class="line">    <span class="keyword">private</span> AtomicInteger execNums = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">    <span class="comment">// 记录出错的次数</span></span><br><span class="line">    <span class="keyword">private</span> AtomicInteger wrongNums = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">    <span class="keyword">private</span> CyclicBarrier cyclicBarrier1 = <span class="keyword">new</span> CyclicBarrier(<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">private</span> CyclicBarrier cyclicBarrier2 = <span class="keyword">new</span> CyclicBarrier(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 考虑第一次就发生错误的情况</span></span><br><span class="line">        marked[<span class="number">0</span>] = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; <span class="number">10000</span>; index++) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 防止线程1执行完了，线程2还未执行检测，</span></span><br><span class="line"><span class="comment">                 又执行线程1的情况，又被cpu切换sum++了一次，这样会影响线程2漏检测</span></span><br><span class="line"><span class="comment">                  */</span></span><br><span class="line">                cyclicBarrier2.reset();</span><br><span class="line">                cyclicBarrier1.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            sum++;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 防止线程1在执行设置为true时，线程2把sum++了一次，</span></span><br><span class="line"><span class="comment">                 导致线程1检测的位置不对</span></span><br><span class="line"><span class="comment">                  */</span></span><br><span class="line">                cyclicBarrier1.reset();</span><br><span class="line">                cyclicBarrier2.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 防止线程1还未检测，线程2把sum++了一次</span></span><br><span class="line">                cyclicBarrier2.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 执行次数增加</span></span><br><span class="line">            execNums.incrementAndGet();</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             检测当前要累加的值是否已经被累加过了，如果是的话，就是计算出错了</span></span><br><span class="line"><span class="comment">             synchronized保证检测的步骤和检测完设置为true的步骤是原子性的</span></span><br><span class="line"><span class="comment">             有可能出现sum++了，第二个线程也sum++，原本我要判断的sum位置就错位了,所以需要CycleBarrier</span></span><br><span class="line"><span class="comment">              */</span></span><br><span class="line">            <span class="keyword">synchronized</span> (instance) &#123;</span><br><span class="line">                <span class="keyword">if</span> (marked[sum] &amp;&amp; marked[sum - <span class="number">1</span>]) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;发生了错误:&quot;</span> + sum);</span><br><span class="line">                    <span class="comment">// 发生错误的次数增加</span></span><br><span class="line">                    wrongNums.incrementAndGet();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 操作过后，设置true</span></span><br><span class="line">                marked[sum] = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line"></span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(instance);</span><br><span class="line">        thread1.start();</span><br><span class="line"></span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(instance);</span><br><span class="line">        thread2.start();</span><br><span class="line"></span><br><span class="line">        thread1.join();</span><br><span class="line">        thread2.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;最终的结果是:&quot;</span> + instance.sum);</span><br><span class="line">        System.out.println(<span class="string">&quot;执行的次数是:&quot;</span> + instance.execNums);</span><br><span class="line">        System.out.println(<span class="string">&quot;出现错误的次数是:&quot;</span> + instance.wrongNums);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="synchronized作用"><a href="#synchronized作用" class="headerlink" title="synchronized作用"></a>synchronized作用</h3><ul>
+<li>synchronized的作用是加锁，所有的synchronieed方法都会顺序执行（这里指占用cpu的顺序）</li>
+<li>synchronized保证在<strong>同一时刻</strong>最多只有<strong>一个</strong>线程执行该段代码</li>
+<li>synchronized能保证可见性和原子性，线程在执行结束前会把独立内存的值刷新回主内存，从而保证可见性</li>
+</ul>
+<h3 id="synchronized的执行方式"><a href="#synchronized的执行方式" class="headerlink" title="synchronized的执行方式"></a>synchronized的执行方式</h3><ul>
+<li>首先尝试获得锁</li>
+<li>如果获得锁，则执行synchronized的方法体内容</li>
+<li>如果无法获得锁，则等待并且不断尝试去获得锁，一旦锁被释放，则多个线程会同时去尝试获得锁，造成锁竞争的问题</li>
+</ul>
+<h3 id="synchronized的缺陷"><a href="#synchronized的缺陷" class="headerlink" title="synchronized的缺陷"></a>synchronized的缺陷</h3><ul>
+<li>效率低<ul>
+<li>锁竞争问题，在高并发、线程数量高时会引起CPU占用居高不下，或者直接宕机</li>
+<li>锁的释放情况少，只有正常结束或抛出异常的时候才释放锁</li>
+<li>试图获得锁时不能设定超时时间</li>
+<li>不能中断一个正在试图获得锁的线程</li>
+</ul>
+</li>
+<li>不够灵活（读写锁更灵活）<ul>
+<li>加锁和释放的时机单一，每个锁仅有单一的条件（某个对象），可能是不够的</li>
+</ul>
+</li>
+<li>无法知道是否成功获取到锁</li>
+</ul>
+<h3 id="synchronized的两个用法：对象锁和类锁"><a href="#synchronized的两个用法：对象锁和类锁" class="headerlink" title="synchronized的两个用法：对象锁和类锁"></a>synchronized的两个用法：对象锁和类锁</h3><ul>
+<li><p>对象锁：一个对象一个锁，多个对象之间不会发生锁竞争</p>
+<ul>
+<li><p>方法锁，默认锁对象为this当前实例对象</p>
+</li>
+<li><p>同步代码块锁，自己指定任意对象(指定锁对象为this，相当于方法锁)</p>
+</li>
+<li><p>```java<br>public synchronized void method(){}<br>// 等价<br>public void method(){</p>
+<pre><code>synchronized(this)&#123;&#125;
+</code></pre>
+<p>}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* 类锁：所有对象共享一把锁，存在锁竞争</span><br><span class="line"></span><br><span class="line">  * synchronized加在静态方法</span><br><span class="line">  * 同步代码块指定锁为Class对象</span><br><span class="line"></span><br><span class="line">#### 栗子1：synchronized保证线程安全</span><br><span class="line"></span><br><span class="line">创建3个线程共享一个ThreadDemo01对象，并对对象中的成员变量进行了写操作。肯定会引发线程安全问题。</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">public class ThreadDemo01 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">    private int count = 0;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        count++;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot;&gt;count=&quot; + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ThreadDemo01 threadDemo01 = new ThreadDemo01();</span><br><span class="line">        for (int i = 0; i &lt; 3; i++) &#123;</span><br><span class="line">            new Thread(threadDemo01, &quot;t&quot; + i).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p>输出结果：</p>
+<p>存在线程安全问题！三条线程使用同一个threadDemo01创建线程。对threadDemo01对象中的count变量进行写的操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t0&gt;count=<span class="number">3</span></span><br><span class="line">t1&gt;count=<span class="number">3</span></span><br><span class="line">t2&gt;count=<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="使用synchronized方法加对象锁，解决线程安全问题："><a href="#使用synchronized方法加对象锁，解决线程安全问题：" class="headerlink" title="使用synchronized方法加对象锁，解决线程安全问题："></a>使用synchronized方法加对象锁，解决线程安全问题：</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    count++;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<p>每隔2s中输出一次结果，不存在线程安全问题！</p>
+<p>当t0执行run方法时，对threadDemo01对象加对象锁，当t1执行run方法时，必须等待t0释放锁才能执行。</p>
+<p>所以sleep2s后，t0执行完，t1就可以执行了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t0&gt;count=<span class="number">1</span></span><br><span class="line">t2&gt;count=<span class="number">2</span></span><br><span class="line">t1&gt;count=<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="使用同步代码块方法加对象锁，解决线程安全问题"><a href="#使用同步代码块方法加对象锁，解决线程安全问题" class="headerlink" title="使用同步代码块方法加对象锁，解决线程安全问题"></a>使用同步代码块方法加对象锁，解决线程安全问题</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">            count++;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用同步代码块指定锁为Class对象加类锁，解决线程安全问题"><a href="#使用同步代码块指定锁为Class对象加类锁，解决线程安全问题" class="headerlink" title="使用同步代码块指定锁为Class对象加类锁，解决线程安全问题"></a>使用同步代码块指定锁为Class对象加类锁，解决线程安全问题</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (ThreadDemo01.class) &#123;</span><br><span class="line">            count++;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用static变量加类锁，解决线程安全问题"><a href="#使用static变量加类锁，解决线程安全问题" class="headerlink" title="使用static变量加类锁，解决线程安全问题"></a>使用static变量加类锁，解决线程安全问题</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        add();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="栗子2：对象锁和类锁"><a href="#栗子2：对象锁和类锁" class="headerlink" title="栗子2：对象锁和类锁"></a>栗子2：对象锁和类锁</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo03</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果是static变量会怎样?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo03 thread1 = <span class="keyword">new</span> ThreadDemo03();</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo03 thread2 = <span class="keyword">new</span> ThreadDemo03();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; thread1.add());</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(() -&gt; thread1.add());</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>同一个对象同一把锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Thread-<span class="number">0</span>&gt;count=<span class="number">1</span></span><br><span class="line">Thread-<span class="number">1</span>&gt;count=<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>把main方法修改一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ThreadDemo03 thread1 = <span class="keyword">new</span> ThreadDemo03();</span><br><span class="line">    <span class="keyword">final</span> ThreadDemo03 thread2 = <span class="keyword">new</span> ThreadDemo03();</span><br><span class="line">    Thread t1 = <span class="keyword">new</span> Thread(() -&gt; thread1.add());</span><br><span class="line">    Thread t2 = <span class="keyword">new</span> Thread(() -&gt; thread2.add());</span><br><span class="line">    t1.start();</span><br><span class="line">    t2.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>不同对象，不同的锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Thread-<span class="number">0</span>&gt;count=<span class="number">1</span></span><br><span class="line">Thread-<span class="number">1</span>&gt;count=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>如果把count变量升级为静态变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo03</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果是static变量会怎样?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            <span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;count=&quot;</span> + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; ThreadDemo03.add());</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(() -&gt; ThreadDemo03.add());</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>对象锁升级为类锁，存在锁竞争问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Thread-<span class="number">0</span>&gt;count=<span class="number">1</span></span><br><span class="line">Thread-<span class="number">1</span>&gt;count=<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="对象锁的同步与异步"><a href="#对象锁的同步与异步" class="headerlink" title="对象锁的同步与异步"></a>对象锁的同步与异步</h3><p>同步：必须等待方法执行完毕，才能向下执行，共享资源访问的时候，为了保证线程安全，必须同步</p>
+<p>异步：不用等待其他方法执行完毕，即可以立即执行，例如Ajax异步</p>
+<ul>
+<li>对象锁只针对synchronized修饰的方法生效、对象中的所有synchronized方法都会同步执行、而非 synchronized方法异步执行</li>
+<li>避免误区：类中有两个synchronized方法，两个线程分别调用两个方法，相互之间也需要竞争锁， 因为两个方法从属于一个对象，而我们是在对象上加锁</li>
+</ul>
+<h4 id="栗子1：同步与异步执行"><a href="#栗子1：同步与异步执行" class="headerlink" title="栗子1：同步与异步执行"></a>栗子1：同步与异步执行</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo02</span> </span>&#123;</span><br><span class="line">    <span class="comment">//同步执行</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">print1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;print1执行,时间:&quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;hello!&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//异步执行</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;print2执行,时间:&quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;hello!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ThreadDemo02 thread = <span class="keyword">new</span> ThreadDemo02();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; thread.print1(), <span class="string">&quot;thread1&quot;</span>);</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(() -&gt; thread.print2(), <span class="string">&quot;thread1&quot;</span>);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>两个线程共享一个ThreadDemo02对象，当t1执行synchronized void print1()时会加对象锁，而此时t2执行public void print2()能不能执行成功？是不是要等待t1释放锁才能执行？</p>
+<p>从运行结果来看，在同一时间，t1执行了print1方法，t2执行了print2方法，说明t2不需要等待t1释放锁。这时因为对象中的所有synchronized方法都会同步执行、而非 synchronized方法异步执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print2执行,时间:Thu Jun <span class="number">25</span> <span class="number">18</span>:<span class="number">26</span>:<span class="number">43</span> CST <span class="number">2020</span></span><br><span class="line">print1执行,时间:Thu Jun <span class="number">25</span> <span class="number">18</span>:<span class="number">26</span>:<span class="number">43</span> CST <span class="number">2020</span></span><br><span class="line">thread1&gt;hello!</span><br><span class="line">thread1&gt;hello!</span><br></pre></td></tr></table></figure>
+
+<p>如果给print2也加上synchronized关键字：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">print2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;print2执行,时间:&quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;hello!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>同一个对象的多个synchronized方法是同步执行的，多条线程如果调用的是synchronized方法，是要等待其他线程对该对象释放锁后才能执行的。</p>
+<p>t1对print1加对象锁，t2要像访问同一对象的print2方法，就需要等待t1执行完毕释放锁才能继续执行，可以看到输出结果中sleep3s等待t1释放锁，才执行print2方法 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">print1执行,时间:Thu Jun <span class="number">25</span> <span class="number">18</span>:<span class="number">34</span>:<span class="number">06</span> CST <span class="number">2020</span></span><br><span class="line">thread1&gt;hello!</span><br><span class="line">print1执行,时间:Thu Jun <span class="number">25</span> <span class="number">18</span>:<span class="number">34</span>:09 CST <span class="number">2020</span></span><br><span class="line">thread1&gt;hello!</span><br></pre></td></tr></table></figure>
+
+<h3 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h3><p>由于同步和异步方法的执行个性，如果不从全局上进行并发设计很可能会引起数据的不一致，也就是所谓的脏读。</p>
+<ul>
+<li>多个线程访问同一资源，在一个线程修改数据的过程中，有另外的线程来读取数据，就会引起脏读数据的产生。</li>
+<li>为了避免脏读，我们一定要保证数据修改操作的原子性，并且对读操作也要进行同步控制</li>
+</ul>
+<h4 id="栗子1：脏读的产生"><a href="#栗子1：脏读的产生" class="headerlink" title="栗子1：脏读的产生"></a>栗子1：脏读的产生</h4><p>线程修改ThreadDemo04的name和address属性，但是address还未修改成功，就被读取，从而发生了脏读。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo04</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">&quot;张三&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> String address = <span class="string">&quot;大兴&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setVal</span><span class="params">(String name, String address)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.address = address;</span><br><span class="line">        System.out.println(<span class="string">&quot;setValue最终结果：username = &quot;</span> + name + <span class="string">&quot; , address = &quot;</span> + address);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getVal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getValue方法得到：username = &quot;</span> + <span class="keyword">this</span>.name + <span class="string">&quot; , address = &quot;</span> + <span class="keyword">this</span>.address);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo04 dr = <span class="keyword">new</span> ThreadDemo04();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; dr.setVal(<span class="string">&quot;李四&quot;</span>, <span class="string">&quot;昌平&quot;</span>));</span><br><span class="line">        t1.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 睡眠1s,t1线程肯定还未执行结束</span></span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">        dr.getVal();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>线程还未将地址修改，main线程将旧的数据读取了出来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">getValue方法得到：username = 李四 , address = 大兴</span><br><span class="line">setValue最终结果：username = 李四 , address = 昌平</span><br></pre></td></tr></table></figure>
+
+<p>要解决脏读问题，对读操作也要进行同步控制：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">getVal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;getValue方法得到：username = &quot;</span> + <span class="keyword">this</span>.name + <span class="string">&quot; , address = &quot;</span> + <span class="keyword">this</span>.address);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setValue最终结果：username = 李四 , address = 昌平</span><br><span class="line">getValue方法得到：username = 李四 , address = 昌平</span><br></pre></td></tr></table></figure>
+
+<h3 id="synchronized的性质"><a href="#synchronized的性质" class="headerlink" title="synchronized的性质"></a>synchronized的性质</h3><blockquote>
+<p>不可中断性</p>
+</blockquote>
+<p>一旦这个锁已经被别人获得了，如果我还想获得，我只能选择等待或者阻塞，直到别的线程释放这个锁。如果别人永远不释放锁，那么我只能永远地等下去。</p>
+<blockquote>
+<p>可重入性</p>
+</blockquote>
+<p>同一个线程得到了一个对象的锁之后，再次请求此对象时可以再次获得该对象的锁。（同一线程的外层函数获得锁之后，内层函数可以直接再次获取该锁）</p>
+<p>1.优点：避免死锁，提升封装性</p>
+<p>2.粒度：</p>
+<ul>
+<li>证明同一个方法是可重入的（递归调用本方法）</li>
+<li>证明可重入不要求是同一个方法（同一个对象内的多个synchromized方法可以锁重入）</li>
+<li>证明可重入不要求是同一个类中的（父子类可以锁重入）</li>
+</ul>
+<h4 id="栗子1：同一个对象内的多个synchronized方法"><a href="#栗子1：同一个对象内的多个synchronized方法" class="headerlink" title="栗子1：同一个对象内的多个synchronized方法"></a>栗子1：同一个对象内的多个synchronized方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">run1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot;&gt;run1...&quot;</span>);</span><br><span class="line">        <span class="comment">//调用同类中的synchronized方法不会引起死锁</span></span><br><span class="line">        run2();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">run2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot;&gt;run2...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo05 threadDemo05 = <span class="keyword">new</span> ThreadDemo05();</span><br><span class="line">        Thread thread = <span class="keyword">new</span> Thread(() -&gt; threadDemo05.run1());</span><br><span class="line">        thread.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>线程首先调用了run1()方法，对threadDemo05对象加对象锁，在run1()方法中又调用了synchronized修饰的run2()方法，按理说，run1()方法还没有执行完毕，没有释放锁，执行run2()方法没有获得锁，是会发生死锁的。但是运行结果说明，同个对象的synchronized方法是可以锁重入的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Thread-<span class="number">0</span>&gt;run1...</span><br><span class="line">Thread-<span class="number">0</span>&gt;run2...</span><br></pre></td></tr></table></figure>
+
+<h4 id="栗子2-：父子类的锁重入"><a href="#栗子2-：父子类的锁重入" class="headerlink" title="栗子2 ：父子类的锁重入"></a>栗子2 ：父子类的锁重入</h4><p>在child类中synchronized方法中调用了Parent类的synchronized方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">runParent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        i--;</span><br><span class="line">        System.out.println(<span class="string">&quot;Parent&gt;&gt;&gt;&gt;i=&quot;</span> + i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Child</span> <span class="keyword">extends</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">runChild</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            i--;</span><br><span class="line">            System.out.println(<span class="string">&quot;Child&gt;&gt;&gt;&gt;i=&quot;</span> + i);</span><br><span class="line">            <span class="comment">//调用父类中的synchronized方法不会引起死锁</span></span><br><span class="line">            <span class="keyword">this</span>.runParent();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo06</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            Child sub = <span class="keyword">new</span> Child();</span><br><span class="line">            sub.runChild();</span><br><span class="line">        &#125;);</span><br><span class="line">        t1.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>Child类继承了Parent的i变量和runParent()。</p>
+<p>当线程调用Child类的runChild()时，对sub对象加对象锁，而在runChild方法中又调用了runParent方法，按理说，runChild方法没有执行完毕，不会释放锁，runParent方法执行又需要获得锁，会发生死锁现象。从运行结果来看，父子类之间的多个synchronized方法是可以锁重入的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Child&gt;&gt;&gt;&gt;i=<span class="number">9</span></span><br><span class="line">Parent&gt;&gt;&gt;&gt;i=<span class="number">8</span></span><br><span class="line">Child&gt;&gt;&gt;&gt;i=<span class="number">7</span></span><br><span class="line">Parent&gt;&gt;&gt;&gt;i=<span class="number">6</span></span><br><span class="line">Child&gt;&gt;&gt;&gt;i=<span class="number">5</span></span><br><span class="line">Parent&gt;&gt;&gt;&gt;i=<span class="number">4</span></span><br><span class="line">Child&gt;&gt;&gt;&gt;i=<span class="number">3</span></span><br><span class="line">Parent&gt;&gt;&gt;&gt;i=<span class="number">2</span></span><br><span class="line">Child&gt;&gt;&gt;&gt;i=<span class="number">1</span></span><br><span class="line">Parent&gt;&gt;&gt;&gt;i=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="抛出异常释放锁"><a href="#抛出异常释放锁" class="headerlink" title="抛出异常释放锁"></a>抛出异常释放锁</h3><p>一个线程在获得锁之后执行操作，发生错误抛出异常，则自动释放锁。</p>
+<ul>
+<li>可以利用抛出异常，主动释放锁</li>
+<li>程序异常时防止资源被死锁，无法释放</li>
+<li>异常释放锁可能导致数据不一致</li>
+</ul>
+<h4 id="栗子1：主动抛出异常，释放锁"><a href="#栗子1：主动抛出异常，释放锁" class="headerlink" title="栗子1：主动抛出异常，释放锁"></a>栗子1：主动抛出异常，释放锁</h4><p>在变量i加到10的时候主动释放锁，才能让get方法获取变量i的值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo07</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;-run&gt;i=&quot;</span> + i);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">10</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 防止脏读</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;-get&gt;i=&quot;</span> + i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo07 threadDemo07 = <span class="keyword">new</span> ThreadDemo07();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; threadDemo07.add(), <span class="string">&quot;t1&quot;</span>).start();</span><br><span class="line">        <span class="comment">// 保证t1线程先执行</span></span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; threadDemo07.get(), <span class="string">&quot;t2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>线程调用add方法，在add方法中对i进行累加，本会一直无限循环进行累加，但在add方法中主动抛出了异常，释放锁，而get方法就可以运行得到i的值。</p>
+<p>这里需要注意的是，即使add方法没有释放锁，get方法也可以锁重入。但因为synchronized方法是同步执行的，所以get方法必须等add方法执行完才能执行。</p>
+<p>==<strong>所以这里要区分死锁问题和同步执行问题</strong>==</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">t1-run&gt;i=<span class="number">1</span></span><br><span class="line">t1-run&gt;i=<span class="number">2</span></span><br><span class="line">t1-run&gt;i=<span class="number">3</span></span><br><span class="line">t1-run&gt;i=<span class="number">4</span></span><br><span class="line">t1-run&gt;i=<span class="number">5</span></span><br><span class="line">t1-run&gt;i=<span class="number">6</span></span><br><span class="line">t1-run&gt;i=<span class="number">7</span></span><br><span class="line">t1-run&gt;i=<span class="number">8</span></span><br><span class="line">t1-run&gt;i=<span class="number">9</span></span><br><span class="line">t1-run&gt;i=<span class="number">10</span></span><br><span class="line">t2-get&gt;i=<span class="number">10</span></span><br><span class="line">Exception in thread <span class="string">&quot;t1&quot;</span> java.lang.RuntimeException</span><br><span class="line">	at thread04.ThreadDemo07.run(ThreadDemo07.java:<span class="number">29</span>)</span><br><span class="line">	at thread04.ThreadDemo07.lambda$main$<span class="number">0</span>(ThreadDemo07.java:<span class="number">41</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="synchronized代码块"><a href="#synchronized代码块" class="headerlink" title="synchronized代码块"></a>synchronized代码块</h3><p>可以达到更细粒度的控制</p>
+<ul>
+<li>当前对象锁</li>
+<li>类锁</li>
+<li>任意对象锁</li>
+</ul>
+<h4 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo08</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;当前对象锁..&quot;</span>);</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (ThreadDemo08.class) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;类锁..&quot;</span>);</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object objectLock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (objectLock) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot;&gt;任意对象锁..&quot;</span>);</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//测试方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="number">1</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;当前对象锁测试...&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == <span class="number">2</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;类锁测试...&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;任意对象锁测试...&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo08 demo1 = <span class="keyword">new</span> ThreadDemo08();</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo08 demo2 = <span class="keyword">new</span> ThreadDemo08();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (type == <span class="number">1</span>) &#123;</span><br><span class="line">                demo1.run1();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == <span class="number">2</span>) &#123;</span><br><span class="line">                demo1.run2();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                demo1.run3();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;t1&quot;</span>);</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (type == <span class="number">1</span>) &#123;</span><br><span class="line">                demo1.run1();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == <span class="number">2</span>) &#123;</span><br><span class="line">                demo2.run2();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                demo1.run3();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;t2&quot;</span>);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        test(<span class="number">1</span>);  <span class="comment">// 测试当前对象锁</span></span><br><span class="line">        <span class="comment">//test(2);  // 测试类锁</span></span><br><span class="line">        <span class="comment">//test(3);  // 测试任意对象锁</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：test(1)</p>
+<p>可以用同步代码块对当前对象加锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当前对象锁测试...</span><br><span class="line">t1&gt;当前对象锁..</span><br><span class="line">t2&gt;当前对象锁..</span><br></pre></td></tr></table></figure>
+
+<p>test(2)：</p>
+<p>可以用同步代码块对类加锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">类锁测试...</span><br><span class="line">t1&gt;类锁..</span><br><span class="line">t2&gt;类锁..</span><br></pre></td></tr></table></figure>
+
+<p>test(3):</p>
+<p>可以用同步代码块对任意对象加锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">任意对象锁测试...</span><br><span class="line">t1&gt;任意对象锁..</span><br><span class="line">t2&gt;任意对象锁..</span><br></pre></td></tr></table></figure>
+
+<p>我们测试一下当类锁和对象锁同时存在的情况：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">final</span> ThreadDemo08 demo1 = <span class="keyword">new</span> ThreadDemo08();</span><br><span class="line">     <span class="keyword">final</span> ThreadDemo08 demo2 = <span class="keyword">new</span> ThreadDemo08();</span><br><span class="line">     System.out.println(<span class="keyword">new</span> Date());</span><br><span class="line">     <span class="comment">// 加类锁</span></span><br><span class="line">     Thread t1 = <span class="keyword">new</span> Thread(() -&gt; demo1.run2(), <span class="string">&quot;t1&quot;</span>);</span><br><span class="line">     t1.start();</span><br><span class="line"></span><br><span class="line">     <span class="comment">// 加对象锁</span></span><br><span class="line">     Thread t2 = <span class="keyword">new</span> Thread(() -&gt; demo2.run1(), <span class="string">&quot;t2&quot;</span>);</span><br><span class="line">     t2.start();</span><br><span class="line">     System.out.println(<span class="keyword">new</span> Date());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>从运行结果可以看到，在同一时间，两条线程并行执行了。并没有sleep2s，也就是说对象锁并不需要等待类锁释放才执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Thu Jun <span class="number">25</span> <span class="number">22</span>:<span class="number">19</span>:<span class="number">14</span> CST <span class="number">2020</span></span><br><span class="line">t1&gt;类锁..</span><br><span class="line">Thu Jun <span class="number">25</span> <span class="number">22</span>:<span class="number">19</span>:<span class="number">14</span> CST <span class="number">2020</span></span><br><span class="line">t2&gt;当前对象锁..</span><br></pre></td></tr></table></figure>
+
+<p>总结：<strong>同类型锁之间互坼，不同类型的锁之间互不干扰</strong></p>
+<h3 id="synchronized使用的几种情况"><a href="#synchronized使用的几种情况" class="headerlink" title="synchronized使用的几种情况"></a>synchronized使用的几种情况</h3><ol>
+<li>两个线程同时访问<strong>同一对象</strong>的synchronized方法<ul>
+<li>同一时刻只有一个线程访问，另一个线程阻塞，对象锁</li>
+</ul>
+</li>
+<li>两个线程同时访问<strong>不同对象</strong>的synchronized方法<ul>
+<li>两个线程并行执行，互不影响</li>
+</ul>
+</li>
+<li>两个线程访问的是synchronized的static方法<ul>
+<li>同一时刻只有一个线程访问，另一个线程阻塞，类锁</li>
+</ul>
+</li>
+<li>同时访问synchronized修饰的方法与没有sychronized修饰的方法<ul>
+<li>synchronized修饰的方法同步执行，没有synchronized修饰的方法异步执行</li>
+</ul>
+</li>
+<li>访问同一个对象实例的不同的非static的synchronized方法<ul>
+<li>同步执行，因为synchronized修饰的非static方法默认使用synchronized(this)加对象锁的方式</li>
+</ul>
+</li>
+<li>同时访问<strong>静态</strong>synchronized方法与<strong>非静态</strong>的synchronized方法<ul>
+<li>不会影响。同种类型的锁会互坼，不同类型的锁互不干扰。因为静态synchronized方法对class加锁，非静态synchronized方法对this加锁，不是同一把锁</li>
+</ul>
+</li>
+<li>方法抛出异常，释放锁</li>
+</ol>
+<p>总结(3个核心思想)：</p>
+<ul>
+<li>一把锁只能同时被一个线程获取，没有拿到锁的线程必须等待（对应1、5的情况）</li>
+<li>每个实例都对应自己的一把锁，不同实例之间互不影响。例外：锁对象是*.class以及synchronized修饰的是static方法的时候，所有对象共用同一把类锁（对应2、3、4、6的情况）</li>
+<li>无论是方法正常执行完毕或者方法抛出异常，都会释放锁（对应第7种情况）</li>
+</ul>
+<h3 id="synchronized原理"><a href="#synchronized原理" class="headerlink" title="synchronized原理"></a>synchronized原理</h3><blockquote>
+<p>加锁和释放锁的原理</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// synchronized加锁的机制类似如下代码</span></span><br><span class="line"></span><br><span class="line">Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="comment">// 情况1：抛出异常释放锁的情况</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 情况2：正常结束释放锁的情况</span></span><br><span class="line">    lock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>反编译查看monitor</p>
+</blockquote>
+<p>javap -verbose  SynchronizedLock.class 查看反编译文件。</p>
+<p>一个monitorenter可以对应多个monitorexit，是因为进入之后度与退出的情况并不是一一对应的，多种退出方式使得exit数量可能大于enter的数量。</p>
+<p>monitorenter使monitor计数器+1，monitorexit使计数器-1,如果变成没有变成0，说明之前是重入的，那么线程继续持有锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: getfield      #<span class="number">3</span>                  <span class="comment">// Field obj:Ljava/lang/Object;</span></span><br><span class="line">         <span class="number">4</span>: dup</span><br><span class="line">         <span class="number">5</span>: astore_1</span><br><span class="line">         <span class="number">6</span>: monitorenter	<span class="comment">// 重点</span></span><br><span class="line">         <span class="number">7</span>: aload_1</span><br><span class="line">         <span class="number">8</span>: monitorexit		<span class="comment">// 重点</span></span><br><span class="line">         <span class="number">9</span>: goto          <span class="number">17</span></span><br><span class="line">        <span class="number">12</span>: astore_2</span><br><span class="line">        <span class="number">13</span>: aload_1</span><br><span class="line">        <span class="number">14</span>: monitorexit		<span class="comment">// 可能存在一个monitorenter对应着多个monitorexit,因为存在两种退出情况</span></span><br><span class="line">        <span class="number">15</span>: aload_2</span><br><span class="line">        <span class="number">16</span>: athrow</span><br><span class="line">        <span class="number">17</span>: <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="锁失效问题"><a href="#锁失效问题" class="headerlink" title="锁失效问题"></a>锁失效问题</h3><ul>
+<li>不要在线程中修改对象锁的引用，引用被改变会导致锁失效。</li>
+<li>在线程中修改了锁对象的属性，而不修改引用则不会引起锁失效，不会产生线程安全问题</li>
+</ul>
+<h4 id="栗子1：修改对象的引用会引起锁失效"><a href="#栗子1：修改对象的引用会引起锁失效" class="headerlink" title="栗子1：修改对象的引用会引起锁失效"></a>栗子1：修改对象的引用会引起锁失效</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo09</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String lock = <span class="string">&quot;lock handler&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;当前线程 : &quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;开始&quot;</span>);</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;当前线程 : &quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;结束&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ThreadDemo09 changeLock = <span class="keyword">new</span> ThreadDemo09();</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(() -&gt; changeLock.method(), <span class="string">&quot;t1&quot;</span>);</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(() -&gt; changeLock.method(), <span class="string">&quot;t2&quot;</span>);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>正常的执行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">当前线程 : t1开始</span><br><span class="line">当前线程 : t1结束</span><br><span class="line">当前线程 : t2开始</span><br><span class="line">当前线程 : t2结束</span><br></pre></td></tr></table></figure>
+
+<p>由于锁的引用被改变，所以t2线程也进入到method方法内执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;当前线程 : &quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;开始&quot;</span>);</span><br><span class="line">                <span class="comment">//锁的引用被改变,则其他线程可获得锁，导致并发问题</span></span><br><span class="line">                lock = <span class="string">&quot;change lock handler&quot;</span>;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;当前线程 : &quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;结束&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>从运行结果来看，synchronized同步代码块不能保证原子性了，同步失效了。这是因为在线程执行过程中，线程A修改了锁的引用，则线程B实际上得到了新的对象锁，而不是锁被释放了，因此引发了线程安全问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">当前线程 : t1开始</span><br><span class="line">当前线程 : t1结束</span><br><span class="line">当前线程 : t2开始</span><br><span class="line">当前线程 : t2结束</span><br></pre></td></tr></table></figure>
+
+<h4 id="栗子2：修改对象属性不会引起锁失效"><a href="#栗子2：修改对象属性不会引起锁失效" class="headerlink" title="栗子2：修改对象属性不会引起锁失效"></a>栗子2：修改对象属性不会引起锁失效</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;DemoThread10 [name=&quot;</span> + name + <span class="string">&quot;, age=&quot;</span> + age + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo10</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Person person = <span class="keyword">new</span> Person();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changeUser</span><span class="params">(String name, <span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (person) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;开始&quot;</span> + person);</span><br><span class="line">            <span class="comment">// 修改对象的属性，不会引起锁失效</span></span><br><span class="line">            person.setAge(age);</span><br><span class="line">            person.setName(name);</span><br><span class="line">            System.out.println(<span class="string">&quot;线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;修改为&quot;</span> + person);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">&quot;线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;结束&quot;</span> + person);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ThreadDemo10 thread10 = <span class="keyword">new</span> ThreadDemo10();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; thread10.changeUser(<span class="string">&quot;小白&quot;</span>, <span class="number">99</span>), <span class="string">&quot;t1&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; thread10.changeUser(<span class="string">&quot;小黑&quot;</span>, <span class="number">100</span>), <span class="string">&quot;t2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p>synchronized加的对象锁没有失效，没有出现线程安全问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">线程t1开始DemoThread10 [name=<span class="keyword">null</span>, age=<span class="number">0</span>]</span><br><span class="line">线程t1修改为DemoThread10 [name=小白, age=<span class="number">99</span>]</span><br><span class="line">线程t1结束DemoThread10 [name=小白, age=<span class="number">99</span>]</span><br><span class="line">线程t2开始DemoThread10 [name=小白, age=<span class="number">99</span>]</span><br><span class="line">线程t2修改为DemoThread10 [name=小黑, age=<span class="number">100</span>]</span><br><span class="line">线程t2结束DemoThread10 [name=小黑, age=<span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="一句话总结Synchronized"><a href="#一句话总结Synchronized" class="headerlink" title="一句话总结Synchronized"></a>一句话总结Synchronized</h3><p>JVM会自动通过使用monitor来加锁和解锁，保证了同一时刻只有一个线程可以执行指定代码，从而保证了线程安全，同时具有可重入和不可中断的性质。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>一毛也是爱~</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="Kim.Zhang 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/并发基础/" rel="tag"># 并发基础</a>
+            
+          </div>
+        
+
+        
+  <div class="post-widgets">
+    <div class="social-share">
+      
+      
+        <div id="needsharebutton-postbottom">
+          <span class="btn">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </span>
+        </div>
+      
+    </div>
+  
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/08/10/并发/基础篇/进程间通信/" rel="prev" title="进程间通信.md">
+                  进程间通信.md <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/1.jpg"
+      alt="Kim.Zhang">
+  <p class="site-author-name" itemprop="name">Kim.Zhang</p>
+  <div class="site-description motion-element" itemprop="description">且行且珍惜</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:woshizhangjinming@vip.qq.com" title="E-Mail &rarr; mailto:woshizhangjinming@vip.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/6196561949" title="Weibo &rarr; https://weibo.com/6196561949" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是线程安全"><span class="nav-number">1.</span> <span class="nav-text">什么是线程安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需要考虑线程安全的情况"><span class="nav-number">2.</span> <span class="nav-text">需要考虑线程安全的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：多个线程a-导致的线程安全问题"><span class="nav-number">2.1.</span> <span class="nav-text">栗子1：多个线程a++导致的线程安全问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized作用"><span class="nav-number">3.</span> <span class="nav-text">synchronized作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized的执行方式"><span class="nav-number">4.</span> <span class="nav-text">synchronized的执行方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized的缺陷"><span class="nav-number">5.</span> <span class="nav-text">synchronized的缺陷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized的两个用法：对象锁和类锁"><span class="nav-number">6.</span> <span class="nav-text">synchronized的两个用法：对象锁和类锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用synchronized方法加对象锁，解决线程安全问题："><span class="nav-number">6.0.1.</span> <span class="nav-text">使用synchronized方法加对象锁，解决线程安全问题：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用同步代码块方法加对象锁，解决线程安全问题"><span class="nav-number">6.0.2.</span> <span class="nav-text">使用同步代码块方法加对象锁，解决线程安全问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用同步代码块指定锁为Class对象加类锁，解决线程安全问题"><span class="nav-number">6.0.3.</span> <span class="nav-text">使用同步代码块指定锁为Class对象加类锁，解决线程安全问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用static变量加类锁，解决线程安全问题"><span class="nav-number">6.0.4.</span> <span class="nav-text">使用static变量加类锁，解决线程安全问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子2：对象锁和类锁"><span class="nav-number">6.1.</span> <span class="nav-text">栗子2：对象锁和类锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象锁的同步与异步"><span class="nav-number">7.</span> <span class="nav-text">对象锁的同步与异步</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：同步与异步执行"><span class="nav-number">7.1.</span> <span class="nav-text">栗子1：同步与异步执行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脏读"><span class="nav-number">8.</span> <span class="nav-text">脏读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：脏读的产生"><span class="nav-number">8.1.</span> <span class="nav-text">栗子1：脏读的产生</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized的性质"><span class="nav-number">9.</span> <span class="nav-text">synchronized的性质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：同一个对象内的多个synchronized方法"><span class="nav-number">9.1.</span> <span class="nav-text">栗子1：同一个对象内的多个synchronized方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子2-：父子类的锁重入"><span class="nav-number">9.2.</span> <span class="nav-text">栗子2 ：父子类的锁重入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抛出异常释放锁"><span class="nav-number">10.</span> <span class="nav-text">抛出异常释放锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：主动抛出异常，释放锁"><span class="nav-number">10.1.</span> <span class="nav-text">栗子1：主动抛出异常，释放锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized代码块"><span class="nav-number">11.</span> <span class="nav-text">synchronized代码块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子"><span class="nav-number">11.1.</span> <span class="nav-text">栗子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized使用的几种情况"><span class="nav-number">12.</span> <span class="nav-text">synchronized使用的几种情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized原理"><span class="nav-number">13.</span> <span class="nav-text">synchronized原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁失效问题"><span class="nav-number">14.</span> <span class="nav-text">锁失效问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子1：修改对象的引用会引起锁失效"><span class="nav-number">14.1.</span> <span class="nav-text">栗子1：修改对象的引用会引起锁失效</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#栗子2：修改对象属性不会引起锁失效"><span class="nav-number">14.2.</span> <span class="nav-text">栗子2：修改对象属性不会引起锁失效</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一句话总结Synchronized"><span class="nav-number">15.</span> <span class="nav-text">一句话总结Synchronized</span></a></li></ol></div>
+            
+
+            
+            
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+
+    </div>
+  </aside>
+  
+  
+
+  <div id="sidebar-dimmer"></div>
+ 
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim.Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">574k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:42</span>
+</div>
+
+
+<div class="busuanzi-count">
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      本站总访问量 
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv">4</span>
+    </span>
+    <span> 次 </span>
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      有 
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv">309</span>
+    </span>
+    <span> 人看我的博客啦 </span>
+  <span class="post-meta-divider">|</span>
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共161k字</span>
+</div>
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/08/2019 14:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+
+
+  
+  
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+
+    
+  
+  <div id="needsharebutton-float">
+    <span class="btn">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+<script src="/lib/needsharebutton/needsharebutton.js"></script>
+<script>
+    pbOptions = {};
+      pbOptions.iconStyle = "box";
+    
+      pbOptions.boxForm = "horizontal";
+    
+      pbOptions.position = "bottomCenter";
+    
+      pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-postbottom', pbOptions);
+    flOptions = {};
+      flOptions.iconStyle = "box";
+    
+      flOptions.boxForm = "horizontal";
+    
+      flOptions.position = "middleRight";
+    
+      flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-float', flOptions);
+</script>
+
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  if (CONFIG.page.isPost) {
+    bookmark.scrollToMark('auto', "#更多");
+  } else {
+    bookmark.loadBookmark();
+  }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+</body>
+<script type="text/javascript" src="/js/clicklove.js"></script>
+</html>

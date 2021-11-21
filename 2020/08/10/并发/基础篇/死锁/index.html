@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Slippers_32x32.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Slippers_16x16.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("http://xxxxxxx.xxx"); // 这里替换成你的首页地址
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+
+  <meta name="description" content="什么是死锁死锁就是两个（或更多）线程相互持有对方所需要的资源，又不主动释放资源，导致程序陷入无尽的阻塞，这就是死锁。 多个线程造成死锁的情况：等待的资源，形成一个环 死锁的影响 死锁的影响在不同的系统中是不一样的，这取决于系统对死锁的处理能力 数据库中：检测并放弃事务 JVM中：无法自行处理，但是JVM能检测出死锁    一个必然造成死锁的栗子 当类的对象flag=1时（T1），先锁定O1,睡眠5">
+<meta name="keywords" content="并发基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="死锁.md">
+<meta property="og:url" content="http://www.zhang.kim/2020/08/10/并发/基础篇/死锁/index.html">
+<meta property="og:site_name" content="kim.zhang">
+<meta property="og:description" content="什么是死锁死锁就是两个（或更多）线程相互持有对方所需要的资源，又不主动释放资源，导致程序陷入无尽的阻塞，这就是死锁。 多个线程造成死锁的情况：等待的资源，形成一个环 死锁的影响 死锁的影响在不同的系统中是不一样的，这取决于系统对死锁的处理能力 数据库中：检测并放弃事务 JVM中：无法自行处理，但是JVM能检测出死锁    一个必然造成死锁的栗子 当类的对象flag=1时（T1），先锁定O1,睡眠5">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="d:/ming/images/image-20200723212820862.png">
+<meta property="og:updated_time" content="2021-11-21T04:56:33.449Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="死锁.md">
+<meta name="twitter:description" content="什么是死锁死锁就是两个（或更多）线程相互持有对方所需要的资源，又不主动释放资源，导致程序陷入无尽的阻塞，这就是死锁。 多个线程造成死锁的情况：等待的资源，形成一个环 死锁的影响 死锁的影响在不同的系统中是不一样的，这取决于系统对死锁的处理能力 数据库中：检测并放弃事务 JVM中：无法自行处理，但是JVM能检测出死锁    一个必然造成死锁的栗子 当类的对象flag=1时（T1），先锁定O1,睡眠5">
+<meta name="twitter:image" content="d:/ming/images/image-20200723212820862.png">
+  <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/基础篇/死锁/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>死锁.md | kim.zhang</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kim.zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">风在前，无惧!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhang.kim/2020/08/10/并发/基础篇/死锁/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim.Zhang">
+      <meta itemprop="description" content="且行且珍惜">
+      <meta itemprop="image" content="/images/1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kim.zhang">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">死锁.md
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-08-10 22:46:35" itemprop="dateCreated datePublished" datetime="2020-08-10T22:46:35+08:00">2020-08-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 12:56:33" itemprop="dateModified" datetime="2021-11-21T12:56:33+08:00">2021-11-21</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/并发/" itemprop="url" rel="index"><span itemprop="name">并发</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>8k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>7 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="什么是死锁"><a href="#什么是死锁" class="headerlink" title="什么是死锁"></a>什么是死锁</h3><p>死锁就是两个（或更多）线程相互持有对方所需要的资源，又不主动释放资源，导致程序陷入无尽的阻塞，这就是死锁。</p>
+<p><strong>多个线程造成死锁的情况</strong>：等待的资源，形成一个环</p>
+<h3 id="死锁的影响"><a href="#死锁的影响" class="headerlink" title="死锁的影响"></a>死锁的影响</h3><ul>
+<li>死锁的影响在不同的系统中是不一样的，这取决于系统对死锁的处理能力<ul>
+<li>数据库中：检测并放弃事务</li>
+<li>JVM中：无法自行处理，但是JVM能检测出死锁</li>
+</ul>
+</li>
+</ul>
+<h3 id="一个必然造成死锁的栗子"><a href="#一个必然造成死锁的栗子" class="headerlink" title="一个必然造成死锁的栗子"></a>一个必然造成死锁的栗子</h3><ul>
+<li>当类的对象flag=1时（T1），先锁定O1,睡眠500毫秒，然后锁定O2；</li>
+<li>而T1在睡眠的时候另一个flag=0的对象（T2）线程启动，先锁定O2,睡眠500毫秒，等待T1释放O1；</li>
+<li>T1睡眠结束后需要锁定O2才能继续执行，而此时O2已被T2锁定；</li>
+<li>T2睡眠结束后需要锁定O1才能继续执行，而此时O1已被T1锁定；</li>
+<li>T1、T2相互等待，都需要对方锁定的资源才能继续执行，从而死锁。</li>
+</ul>
+<p>同时注意一点，死锁的程序退出状态码是130.</p>
+<blockquote>
+<p>Process finished with exit code <strong>130</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/22 22:07</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 演示必然造成死锁的栗子，线程1先获取lock1锁，线程2先获取lock2锁</span></span><br><span class="line"><span class="comment"> * 短暂休眠保证两个线程都获取了锁之后，之后争夺类锁会造成死锁</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MustHappenDeedLock</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 控制不同的进程执行不同的代码块</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> flag;</span><br><span class="line">    <span class="comment">// 必须加static关键字，如果是对象锁，则不会造成死锁，因为使用不同的对象创建线程</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock1 = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock2 = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建两个线程争夺类锁</span></span><br><span class="line">        MustHappenDeedLock mustHappenDeedLock1 = <span class="keyword">new</span> MustHappenDeedLock();</span><br><span class="line">        MustHappenDeedLock mustHappenDeedLock2 = <span class="keyword">new</span> MustHappenDeedLock();</span><br><span class="line">        mustHappenDeedLock1.flag = <span class="number">0</span>;</span><br><span class="line">        mustHappenDeedLock2.flag = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">new</span> Thread(mustHappenDeedLock1).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(mustHappenDeedLock2).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock1) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (lock2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;获得了两把锁&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock2) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (lock1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;获得了两把锁&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="死锁的4个必要条件"><a href="#死锁的4个必要条件" class="headerlink" title="死锁的4个必要条件"></a>死锁的4个必要条件</h3><ul>
+<li>互坼条件：在同一时刻，只能有一个线程拥有资源</li>
+<li>请求与保持条件：自己不释放资源，又去申请别的资源</li>
+<li>不剥夺条件：没有外界的干扰</li>
+<li>循环等待条件：多个线程没有形成环路</li>
+</ul>
+<p><strong>死锁的形成，这4个条件缺一不可</strong></p>
+<h3 id="如何定位死锁"><a href="#如何定位死锁" class="headerlink" title="如何定位死锁"></a>如何定位死锁</h3><ul>
+<li>jstack（jvm命令，可以先用jps lvm查看JVM进程）</li>
+<li>ThreadMXBean（代码）</li>
+</ul>
+<h3 id="修复死锁的策略"><a href="#修复死锁的策略" class="headerlink" title="修复死锁的策略"></a>修复死锁的策略</h3><blockquote>
+<p>线上发生死锁应该怎么办</p>
+</blockquote>
+<ul>
+<li>保存案发现场，然后立刻重启服务器</li>
+<li>暂时保证线上服务的安全，然后再利用刚才保存的信息，排查死锁，修改代码，重新发布</li>
+</ul>
+<blockquote>
+<p>1.避免策略</p>
+</blockquote>
+<ul>
+<li>避免相反的获取锁的顺序<pre><code>    * 通过hashcode来决定获取锁的顺序，冲突时需要“加时赛”
+      * 实际工程中可以利用数据库的主键
+</code></pre>
+</li>
+<li>哲学家就餐问题</li>
+</ul>
+<blockquote>
+<p>2.检测与恢复策略</p>
+</blockquote>
+<p>​        一段时间检测是否有死锁，如果有就剥夺某一个资源，来打开死锁</p>
+<p><img src="D:\ming\images\image-20200723212820862.png" alt="image-20200723212820862"></p>
+<blockquote>
+<p>3.鸵鸟策略</p>
+</blockquote>
+<p>​    如果发生死锁的概率非常低，我们就直接忽略它，直到死锁发生的时候，再人工修复。</p>
+<h3 id="栗子1：哲学家就餐问题（换序避免死锁）"><a href="#栗子1：哲学家就餐问题（换序避免死锁）" class="headerlink" title="栗子1：哲学家就餐问题（换序避免死锁）"></a>栗子1：哲学家就餐问题（换序避免死锁）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/21 20:20</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 哲学家就餐问题演示</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DiningPhilosopher</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建哲学家</span></span><br><span class="line">        Philosopher[] philosophers = <span class="keyword">new</span> Philosopher[<span class="number">5</span>];</span><br><span class="line">        <span class="comment">// 创建筷子</span></span><br><span class="line">        Object[] chopsticks = <span class="keyword">new</span> Object[philosophers.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; chopsticks.length; i++) &#123;</span><br><span class="line">            chopsticks[i] = <span class="keyword">new</span> Object();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; philosophers.length; i++) &#123;</span><br><span class="line">            Object leftChopstick = chopsticks[i];</span><br><span class="line">            Object rightChopstick = chopsticks[(i + <span class="number">1</span>) % chopsticks.length];</span><br><span class="line">            <span class="comment">// 最后一位哲学家，先拿右边的筷子,避免死锁</span></span><br><span class="line">            <span class="keyword">if</span> (i == philosophers.length - <span class="number">1</span>) &#123;</span><br><span class="line">                philosophers[i] = <span class="keyword">new</span> Philosopher(rightChopstick, leftChopstick);</span><br><span class="line">            &#125;</span><br><span class="line">            philosophers[i] = <span class="keyword">new</span> Philosopher(leftChopstick, rightChopstick);</span><br><span class="line">            <span class="keyword">new</span> Thread(philosophers[i], <span class="string">&quot;哲学家&quot;</span> + (i + <span class="number">1</span>)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 一个线程代表一个哲学家</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Philosopher</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 锁对象代表筷子</span></span><br><span class="line">        <span class="keyword">private</span> Object left = <span class="keyword">new</span> Object();</span><br><span class="line">        <span class="keyword">private</span> Object right = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Philosopher</span><span class="params">(Object left, Object right)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.left = left;</span><br><span class="line">            <span class="keyword">this</span>.right = right;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                doAction(<span class="string">&quot;thinking&quot;</span>);</span><br><span class="line">                <span class="comment">// 获取左边的筷子</span></span><br><span class="line">                <span class="keyword">synchronized</span> (left) &#123;</span><br><span class="line">                    doAction(<span class="string">&quot;获取左边的筷子&quot;</span>);</span><br><span class="line">                    <span class="keyword">synchronized</span> (right) &#123;</span><br><span class="line">                        doAction(<span class="string">&quot;获取右边的筷子- eating&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    doAction(<span class="string">&quot;放下右边的筷子&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                doAction(<span class="string">&quot;放下左边的筷子&quot;</span>);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doAction</span><span class="params">(String action)</span> </span>&#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;:&quot;</span> + action);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(ThreadLocalRandom.current().nextInt(<span class="number">1000</span>));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>另：哲学界就餐问题解决的4种方案：</p>
+<ul>
+<li>服务员检查（避免策略）</li>
+<li>改变一个哲学界拿叉子的顺序，换序（避免策略）</li>
+<li>餐票，只有拿到餐票的才能就餐，就餐完返回餐票（避免策略）</li>
+<li>领导调节（检测与恢复策略）</li>
+</ul>
+<h3 id="栗子2：银行转账（hashCode换序避免死锁）"><a href="#栗子2：银行转账（hashCode换序避免死锁）" class="headerlink" title="栗子2：银行转账（hashCode换序避免死锁）"></a>栗子2：银行转账（hashCode换序避免死锁）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/22 22:28</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 银行转账的栗子，演示死锁的发生，以及通过换序避免死锁的产生</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransferMoneyDeedLock</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Account account1 = <span class="keyword">new</span> Account(<span class="number">500</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Account account2 = <span class="keyword">new</span> Account(<span class="number">500</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> flag;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        TransferMoneyDeedLock transferMoneyDeedLock1 = <span class="keyword">new</span> TransferMoneyDeedLock();</span><br><span class="line">        TransferMoneyDeedLock transferMoneyDeedLock2 = <span class="keyword">new</span> TransferMoneyDeedLock();</span><br><span class="line">        transferMoneyDeedLock1.flag = <span class="number">0</span>;</span><br><span class="line">        transferMoneyDeedLock2.flag = <span class="number">1</span>;</span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(transferMoneyDeedLock1, <span class="string">&quot;account1&quot;</span>);</span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(transferMoneyDeedLock2, <span class="string">&quot;account2&quot;</span>);</span><br><span class="line">        thread1.start();</span><br><span class="line">        thread2.start();</span><br><span class="line">        thread1.join();</span><br><span class="line">        thread2.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;account1 balance:&quot;</span> + account1.balance);</span><br><span class="line">        System.out.println(<span class="string">&quot;account2 balance:&quot;</span> + account2.balance);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">0</span>) &#123;</span><br><span class="line">            transferMoney(account1, account2, <span class="number">200</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) &#123;</span><br><span class="line">            transferMoney(account2, account1, <span class="number">200</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">transferMoney</span><span class="params">(Account from, Account to, Integer amount)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取对象的hashcode来决定获取锁的顺序</span></span><br><span class="line">        <span class="keyword">int</span> fromHashCode = System.identityHashCode(from);</span><br><span class="line">        <span class="keyword">int</span> toHashCode = System.identityHashCode(to);</span><br><span class="line">        <span class="keyword">if</span> (fromHashCode &gt; toHashCode) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (from) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (to) &#123;</span><br><span class="line">                    transferHelper(from, to, amount);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fromHashCode &lt; toHashCode) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (to) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (from) &#123;</span><br><span class="line">                    transferHelper(from, to, amount);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// hash冲突的情况，额外加一把锁，公平竞争执行的机会</span></span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                <span class="comment">// 先对from加锁还是to加锁已经不重要了,有了外层的lock,from和to不会同时被获取</span></span><br><span class="line">                <span class="keyword">synchronized</span> (to) &#123;</span><br><span class="line">                    <span class="keyword">synchronized</span> (from) &#123;</span><br><span class="line">                        transferHelper(from, to, amount);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">transferHelper</span><span class="params">(Account from, Account to, Integer amount)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (from.balance - amount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            from.balance -= amount;</span><br><span class="line">            to.balance += amount;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;转账&quot;</span> + amount);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;转账失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Integer balance;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Account</span><span class="params">(Integer balance)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.balance = balance;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="实际工程中如何避免死锁"><a href="#实际工程中如何避免死锁" class="headerlink" title="实际工程中如何避免死锁"></a>实际工程中如何避免死锁</h3><ul>
+<li>设置超时时间</li>
+<li>多使用并发类而不是自己设计锁</li>
+<li>尽量降低锁的使用粒度：用不同的锁而不是一个锁</li>
+<li>如果能使用同步代码块，就不使用同步方法：自己指定锁对象</li>
+<li>给线程起个有意义的名字：debug和排查时事半功倍</li>
+<li>避免锁的嵌套</li>
+<li>分配资源前先看能不能收回来：银行家算法</li>
+<li>尽量不要几个功能用同一把锁：专锁专用</li>
+</ul>
+<h3 id="什么是活锁"><a href="#什么是活锁" class="headerlink" title="什么是活锁"></a>什么是活锁</h3><p>虽然线程并没有阻塞，也始终在运行，但是程序却得不到进展，因为线程始终重复做同样的事</p>
+<h3 id="栗子2：牛郎织女没饭吃（加入随机因素解决活锁）"><a href="#栗子2：牛郎织女没饭吃（加入随机因素解决活锁）" class="headerlink" title="栗子2：牛郎织女没饭吃（加入随机因素解决活锁）"></a>栗子2：牛郎织女没饭吃（加入随机因素解决活锁）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/21 21:47</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 演示活锁，牛郎和织女互相谦让勺子，最后谁都吃不上饭</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveLock</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Diner boy = <span class="keyword">new</span> Diner(<span class="string">&quot;牛郎&quot;</span>);</span><br><span class="line">        Diner girl = <span class="keyword">new</span> Diner(<span class="string">&quot;织女&quot;</span>);</span><br><span class="line">        <span class="comment">// 牛郎先拥有勺子</span></span><br><span class="line">        Spoon spoon = <span class="keyword">new</span> Spoon(boy);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; boy.eatWith(spoon, girl)).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; girl.eatWith(spoon, boy)).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Spoon</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Diner owner;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Spoon</span><span class="params">(Diner owner)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.owner = owner;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">use</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(owner.name + <span class="string">&quot;正在使用勺子&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Diner</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String name;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">boolean</span> isHunger;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Diner</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">            isHunger = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">eatWith</span><span class="params">(Spoon spoon, Diner partner)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">this</span>.isHunger) &#123;</span><br><span class="line">                <span class="comment">// 先判断勺子在不在自己手上</span></span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">this</span> != spoon.owner) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 判断女朋友饿不饿</span></span><br><span class="line">                 <span class="comment">// 加入随机因素解决活锁</span></span><br><span class="line">                <span class="keyword">int</span> random = ThreadLocalRandom.current().nextInt(<span class="number">10</span>);</span><br><span class="line">                <span class="keyword">if</span> (partner.isHunger &amp;&amp; random &lt; <span class="number">9</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="keyword">this</span>.name + <span class="string">&quot;:亲爱的，你先吃吧&quot;</span>);</span><br><span class="line">                    spoon.owner = partner;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 勺子在自己手上</span></span><br><span class="line">                spoon.use();</span><br><span class="line">                <span class="keyword">this</span>.isHunger = <span class="keyword">false</span>;</span><br><span class="line">                System.out.println(<span class="keyword">this</span>.name + <span class="string">&quot;吃完了&quot;</span>);</span><br><span class="line">                spoon.owner = partner;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="什么是饥饿"><a href="#什么是饥饿" class="headerlink" title="什么是饥饿"></a>什么是饥饿</h3><p>当线程需要某些资源（例如CPU），但是却始终得不到</p>
+<ul>
+<li>线程的优先级设置得过于低，或者有某线程持有锁同时又无限循环从而不释放锁，或者某程序始终占用某文件的写锁</li>
+<li>饥饿可能会导致响应性差：比如，我们的浏览器有一个线程负责处理前台响应（打开收藏夹等动作），另外的后台线程负责下载图片和文件、计算渲染等。在这种情况下，如果后台线程把CPU资源都占用了，那么前台线程将无法得到很好地执行，这会导致用户的体验很差</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>一毛也是爱~</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="Kim.Zhang 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/并发基础/" rel="tag"># 并发基础</a>
+            
+          </div>
+        
+
+        
+  <div class="post-widgets">
+    <div class="social-share">
+      
+      
+        <div id="needsharebutton-postbottom">
+          <span class="btn">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </span>
+        </div>
+      
+    </div>
+  
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/08/10/并发/基础篇/生产者与消费者模式/" rel="next" title="生产者与消费者.md">
+                  <i class="fa fa-chevron-left"></i> 生产者与消费者.md
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/08/10/并发/基础篇/子线程异常处理/" rel="prev" title="子线程异常处理.md">
+                  子线程异常处理.md <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/1.jpg"
+      alt="Kim.Zhang">
+  <p class="site-author-name" itemprop="name">Kim.Zhang</p>
+  <div class="site-description motion-element" itemprop="description">且行且珍惜</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:woshizhangjinming@vip.qq.com" title="E-Mail &rarr; mailto:woshizhangjinming@vip.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/6196561949" title="Weibo &rarr; https://weibo.com/6196561949" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是死锁"><span class="nav-number">1.</span> <span class="nav-text">什么是死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#死锁的影响"><span class="nav-number">2.</span> <span class="nav-text">死锁的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个必然造成死锁的栗子"><span class="nav-number">3.</span> <span class="nav-text">一个必然造成死锁的栗子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#死锁的4个必要条件"><span class="nav-number">4.</span> <span class="nav-text">死锁的4个必要条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何定位死锁"><span class="nav-number">5.</span> <span class="nav-text">如何定位死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修复死锁的策略"><span class="nav-number">6.</span> <span class="nav-text">修复死锁的策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栗子1：哲学家就餐问题（换序避免死锁）"><span class="nav-number">7.</span> <span class="nav-text">栗子1：哲学家就餐问题（换序避免死锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栗子2：银行转账（hashCode换序避免死锁）"><span class="nav-number">8.</span> <span class="nav-text">栗子2：银行转账（hashCode换序避免死锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际工程中如何避免死锁"><span class="nav-number">9.</span> <span class="nav-text">实际工程中如何避免死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是活锁"><span class="nav-number">10.</span> <span class="nav-text">什么是活锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栗子2：牛郎织女没饭吃（加入随机因素解决活锁）"><span class="nav-number">11.</span> <span class="nav-text">栗子2：牛郎织女没饭吃（加入随机因素解决活锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是饥饿"><span class="nav-number">12.</span> <span class="nav-text">什么是饥饿</span></a></li></ol></div>
+            
+
+            
+            
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+
+    </div>
+  </aside>
+  
+  
+
+  <div id="sidebar-dimmer"></div>
+ 
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim.Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">574k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:42</span>
+</div>
+
+
+<div class="busuanzi-count">
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      本站总访问量 
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv">4</span>
+    </span>
+    <span> 次 </span>
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      有 
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv">309</span>
+    </span>
+    <span> 人看我的博客啦 </span>
+  <span class="post-meta-divider">|</span>
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共161k字</span>
+</div>
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/08/2019 14:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+
+
+  
+  
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+
+    
+  
+  <div id="needsharebutton-float">
+    <span class="btn">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+<script src="/lib/needsharebutton/needsharebutton.js"></script>
+<script>
+    pbOptions = {};
+      pbOptions.iconStyle = "box";
+    
+      pbOptions.boxForm = "horizontal";
+    
+      pbOptions.position = "bottomCenter";
+    
+      pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-postbottom', pbOptions);
+    flOptions = {};
+      flOptions.iconStyle = "box";
+    
+      flOptions.boxForm = "horizontal";
+    
+      flOptions.position = "middleRight";
+    
+      flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-float', flOptions);
+</script>
+
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  if (CONFIG.page.isPost) {
+    bookmark.scrollToMark('auto', "#更多");
+  } else {
+    bookmark.loadBookmark();
+  }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+</body>
+<script type="text/javascript" src="/js/clicklove.js"></script>
+</html>

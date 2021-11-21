@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Slippers_32x32.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Slippers_16x16.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("http://xxxxxxx.xxx"); // 这里替换成你的首页地址
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+
+  <meta name="description" content="有时候，我们在登陆页面需要添加验证码，而登陆使用的是Spring Security的登陆流程，就需要我们自定义Spring Security的认证逻辑了。有以下两种方式：  添加Spring Security过滤器，这种方式有个弊端，每次请求都会通过该过滤器。但实际上，只需要登录请求经过该过滤器即可，其他请求是不需要经过该过滤器的，存在性能的弊端   1. Authentication接口简析Sp">
+<meta name="keywords" content="Java,SSM,大学生活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kim.zhang">
+<meta property="og:url" content="http://www.zhang.kim/2021/11/21/Spring Security/自定义验证逻辑/index.html">
+<meta property="og:site_name" content="kim.zhang">
+<meta property="og:description" content="有时候，我们在登陆页面需要添加验证码，而登陆使用的是Spring Security的登陆流程，就需要我们自定义Spring Security的认证逻辑了。有以下两种方式：  添加Spring Security过滤器，这种方式有个弊端，每次请求都会通过该过滤器。但实际上，只需要登录请求经过该过滤器即可，其他请求是不需要经过该过滤器的，存在性能的弊端   1. Authentication接口简析Sp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-11-21T04:56:33.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kim.zhang">
+<meta name="twitter:description" content="有时候，我们在登陆页面需要添加验证码，而登陆使用的是Spring Security的登陆流程，就需要我们自定义Spring Security的认证逻辑了。有以下两种方式：  添加Spring Security过滤器，这种方式有个弊端，每次请求都会通过该过滤器。但实际上，只需要登录请求经过该过滤器即可，其他请求是不需要经过该过滤器的，存在性能的弊端   1. Authentication接口简析Sp">
+  <link rel="canonical" href="http://www.zhang.kim/2021/11/21/Spring Security/自定义验证逻辑/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title> | kim.zhang</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kim.zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">风在前，无惧!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhang.kim/2021/11/21/Spring Security/自定义验证逻辑/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim.Zhang">
+      <meta itemprop="description" content="且行且珍惜">
+      <meta itemprop="image" content="/images/1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kim.zhang">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-11-21 12:56:33" itemprop="dateCreated datePublished" datetime="2021-11-21T12:56:33+08:00">2021-11-21</time>
+            </span>
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>11k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>10 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>有时候，我们在登陆页面需要添加验证码，而登陆使用的是Spring Security的登陆流程，就需要我们自定义Spring Security的认证逻辑了。有以下两种方式：</p>
+<ol>
+<li>添加Spring Security过滤器，这种方式有个弊端，每次请求都会通过该过滤器。但实际上，只需要登录请求经过该过滤器即可，其他请求是不需要经过该过滤器的，存在性能的弊端</li>
+<li></li>
+</ol>
+<h3 id="1-Authentication接口简析"><a href="#1-Authentication接口简析" class="headerlink" title="1. Authentication接口简析"></a>1. Authentication接口简析</h3><p>Spring Security的认证逻辑是在接口<code>AuthenticationProvider</code>中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AuthenticationProvider</span> </span>&#123;</span><br><span class="line">    <span class="function">Authentication <span class="title">authenticate</span><span class="params">(Authentication authentication)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> AuthenticationException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">supports</span><span class="params">(Class&lt;?&gt; authentication)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>authenticate方法用来验证用户身份</li>
+<li>supports 则用来判断当前的 AuthenticationProvider 是否支持对应的 Authentication</li>
+</ul>
+<p>在 Spring Security 中有一个非常重要的对象叫做 Authentication，我们可以在任何地方注入 Authentication 进而获取到当前登录用户信息，Authentication 本身是一个接口，它实际上对 java.security.Principal 做的进一步封装，我们来看下 Authentication 的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Authentication</span> <span class="keyword">extends</span> <span class="title">Principal</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 角色列表</span></span><br><span class="line">    Collection&lt;? extends GrantedAuthority&gt; getAuthorities();</span><br><span class="line">    <span class="comment">// 密码</span></span><br><span class="line">    <span class="function">Object <span class="title">getCredentials</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 用户携带的详细信息</span></span><br><span class="line">    <span class="function">Object <span class="title">getDetails</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 当前用户,可能是一个用户名,也可能是一个用户对象</span></span><br><span class="line">    <span class="function">Object <span class="title">getPrincipal</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 当前用户是否认证成功</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isAuthenticated</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setAuthenticated</span><span class="params">(<span class="keyword">boolean</span> isAuthenticated)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Authentication作为一个接口，它有很多的实现类：</p>
+<ul>
+<li>AnonymousAuthenticationToken(匿名登陆)</li>
+<li>UsernamePasswordAuthenticationToken(账户密码登陆)</li>
+<li>RememberMeAuthenticationToken(自动登陆)</li>
+</ul>
+<p>每一个 Authentication 都有适合它的 AuthenticationProvider 去处理校验。例如处理 UsernamePasswordAuthenticationToken 的 AuthenticationProvider 是 DaoAuthenticationProvider。</p>
+<p>在一次完整的认证中，可能包含多个 AuthenticationProvider，而这多个 AuthenticationProvider 则由 ProviderManager 进行统一管理。</p>
+<h3 id="2-DaoAuthenticationProvider简析"><a href="#2-DaoAuthenticationProvider简析" class="headerlink" title="2. DaoAuthenticationProvider简析"></a>2. DaoAuthenticationProvider简析</h3><p>当我们使用账户密码登陆时，认证逻辑的处理类是DaoAuthenticationProvider，而DaoAuthenticationProvider继承自</p>
+<p>AbstractUserDetailsAuthenticationProvider，我们先来看下它的父类，重点关注authenticate和support方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractUserDetailsAuthenticationProvider</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">AuthenticationProvider</span>, <span class="title">InitializingBean</span>, <span class="title">MessageSourceAware</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Authentication <span class="title">authenticate</span><span class="params">(Authentication authentication)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">        Assert.isInstanceOf(UsernamePasswordAuthenticationToken.class, authentication,</span><br><span class="line">() -&gt; <span class="keyword">this</span>.messages.getMessage(<span class="string">&quot;AbstractUserDetailsAuthenticationProvider.onlySupports&quot;</span>, <span class="string">&quot;Only UsernamePasswordAuthenticationToken is supported&quot;</span>));</span><br><span class="line">        <span class="comment">// 获取用户名</span></span><br><span class="line">        String username = determineUsername(authentication);</span><br><span class="line">        <span class="keyword">boolean</span> cacheWasUsed = <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">// 通过用户名获取用户对象,会调用我们自己在登陆时候写的userDetail中的loadUserByUsername方法	</span></span><br><span class="line">        UserDetails user = <span class="keyword">this</span>.userCache.getUserFromCache(username);</span><br><span class="line">        <span class="keyword">if</span> (user == <span class="keyword">null</span>) &#123;</span><br><span class="line">            cacheWasUsed = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (UsernameNotFoundException ex) &#123;</span><br><span class="line">                <span class="keyword">this</span>.logger.debug(<span class="string">&quot;Failed to find user &#x27;&quot;</span> + username + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span> (!<span class="keyword">this</span>.hideUserNotFoundExceptions) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> ex;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> BadCredentialsException(<span class="keyword">this</span>.messages</span><br><span class="line">                                                  .getMessage(<span class="string">&quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;</span>, <span class="string">&quot;Bad credentials&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            Assert.notNull(user, <span class="string">&quot;retrieveUser returned null - a violation of the interface contract&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 检验user中的各个账户属性是否正常,例如账户是否被禁用，账户是否过期等</span></span><br><span class="line">            <span class="keyword">this</span>.preAuthenticationChecks.check(user);</span><br><span class="line">            <span class="comment">// 密码比对,是一个抽象方法，具体由子类实现</span></span><br><span class="line">            additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (AuthenticationException ex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!cacheWasUsed) &#123;</span><br><span class="line">                <span class="keyword">throw</span> ex;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// There was a problem, so try again after checking</span></span><br><span class="line">            <span class="comment">// we&#x27;re using latest data (i.e. not from the cache)</span></span><br><span class="line">            cacheWasUsed = <span class="keyword">false</span>;</span><br><span class="line">            user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);</span><br><span class="line">            <span class="keyword">this</span>.preAuthenticationChecks.check(user);</span><br><span class="line">            additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 检查密码是否过期</span></span><br><span class="line">        <span class="keyword">this</span>.postAuthenticationChecks.check(user);</span><br><span class="line">        <span class="keyword">if</span> (!cacheWasUsed) &#123;</span><br><span class="line">            <span class="keyword">this</span>.userCache.putUserInCache(user);</span><br><span class="line">        &#125;</span><br><span class="line">        Object principalToReturn = user;</span><br><span class="line">        <span class="comment">// 是否强制将Authentication中的principal属性设置为字符串，默认值为false</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.forcePrincipalAsString) &#123;</span><br><span class="line">            principalToReturn = user.getUsername();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 构建一个新的Authentication返回</span></span><br><span class="line">        <span class="keyword">return</span> createSuccessAuthentication(principalToReturn, authentication, user);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 当authentication是UsernamePasswordAuthenticationToken的子类时，需要经过DaoAuthenticationProvider的认证逻辑处理</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supports</span><span class="params">(Class&lt;?&gt; authentication)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于 AbstractUserDetailsAuthenticationProvider 已经把 authenticate 和 supports 方法实现了（实现了大部分校验工作），所以在 DaoAuthenticationProvider 中，我们主要关注 additionalAuthenticationChecks 方法即可（密码比对工作）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;deprecation&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">additionalAuthenticationChecks</span><span class="params">(UserDetails userDetails,</span></span></span><br><span class="line"><span class="params"><span class="function">                                              UsernamePasswordAuthenticationToken authentication)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (authentication.getCredentials() == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.logger.debug(<span class="string">&quot;Failed to authenticate since no credentials provided&quot;</span>);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BadCredentialsException(<span class="keyword">this</span>.messages</span><br><span class="line">                                          .getMessage(<span class="string">&quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;</span>, <span class="string">&quot;Bad credentials&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    String presentedPassword = authentication.getCredentials().toString();</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) &#123;</span><br><span class="line">        <span class="keyword">this</span>.logger.debug(<span class="string">&quot;Failed to authenticate since password does not match stored value&quot;</span>);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BadCredentialsException(<span class="keyword">this</span>.messages</span><br><span class="line">                                          .getMessage(<span class="string">&quot;AbstractUserDetailsAuthenticationProvider.badCredentials&quot;</span>, <span class="string">&quot;Bad credentials&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>additionalAuthenticationChecks 方法主要用来做密码比对的，逻辑也比较简单，就是调用 PasswordEncoder 的 matches 方法做比对，如果密码不对则直接抛出异常即可。</p>
+<p><strong>正常情况下，我们使用用户名/密码登录，最终都会走到这一步。</strong></p>
+<p>而 AuthenticationProvider 都是通过 ProviderManager#authenticate 方法来调用的。由于我们的一次认证可能会存在多个 AuthenticationProvider，所以，在 ProviderManager#authenticate 方法中会逐个遍历 AuthenticationProvider，并调用他们的 authenticate 方法做认证，我们来稍微瞅一眼 ProviderManager#authenticate 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Authentication <span class="title">authenticate</span><span class="params">(Authentication authentication)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (AuthenticationProvider provider : getProviders()) &#123;</span><br><span class="line">        result = provider.authenticate(authentication);</span><br><span class="line">        <span class="keyword">if</span> (result != <span class="keyword">null</span>) &#123;</span><br><span class="line">            copyDetails(authentication, result);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，在这个方法中，会遍历所有的 AuthenticationProvider，并调用它的 authenticate 方法进行认证。</p>
+<h3 id="3-自定义认证流程"><a href="#3-自定义认证流程" class="headerlink" title="3. 自定义认证流程"></a>3. 自定义认证流程</h3><p>登录请求是调用 AbstractUserDetailsAuthenticationProvider#authenticate 方法进行认证的，在该方法中，又会调用到 DaoAuthenticationProvider#additionalAuthenticationChecks 方法做进一步的校验，去校验用户登录密码。我们可以自定义一个 AuthenticationProvider 代替 DaoAuthenticationProvider，并重写它里边的 additionalAuthenticationChecks 方法，在重写的过程中，加入验证码的校验逻辑即可。</p>
+<h4 id="3-1-验证码生成"><a href="#3-1-验证码生成" class="headerlink" title="3.1 验证码生成"></a>3.1 验证码生成</h4><p>导入依赖:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.penggle<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>kaptcha<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置验证码的生成属性：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KaptchaConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Producer <span class="title">verifyCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 验证码属性</span></span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        properties.setProperty(<span class="string">&quot;kaptcha.image.width&quot;</span>,<span class="string">&quot;150&quot;</span>);</span><br><span class="line">        properties.setProperty(<span class="string">&quot;kaptcha.image.height&quot;</span>,<span class="string">&quot;50&quot;</span>);</span><br><span class="line">        properties.setProperty(<span class="string">&quot;kaptcha.textproducer.char.string&quot;</span>,<span class="string">&quot;0123456789&quot;</span>);</span><br><span class="line">        properties.setProperty(<span class="string">&quot;kaptcha.textproducer.char.length&quot;</span>,<span class="string">&quot;4&quot;</span>);</span><br><span class="line">        Config config = <span class="keyword">new</span> Config(properties);</span><br><span class="line">        DefaultKaptcha defaultKaptcha = <span class="keyword">new</span> DefaultKaptcha();</span><br><span class="line">        defaultKaptcha.setConfig(config);</span><br><span class="line">        <span class="keyword">return</span> defaultKaptcha;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写controller，生成验证码图片，并将生成的验证码放入到session中:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KaptchaController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Producer producer;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;code.jpg&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getVerifyCode</span><span class="params">(HttpServletResponse response, HttpSession session)</span> </span>&#123;</span><br><span class="line">        response.setContentType(<span class="string">&quot;image/jpeg&quot;</span>);</span><br><span class="line">        String text = producer.createText();</span><br><span class="line">        <span class="comment">// 验证码放入session中</span></span><br><span class="line">        session.setAttribute(<span class="string">&quot;verifyCode&quot;</span>,text);</span><br><span class="line">        <span class="comment">// 生成验证码</span></span><br><span class="line">        BufferedImage image = producer.createImage(text);</span><br><span class="line">        <span class="keyword">try</span> (ServletOutputStream outputStream = response.getOutputStream()) &#123;</span><br><span class="line">            ImageIO.write(image,<span class="string">&quot;jpg&quot;</span>,outputStream);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，记得放行验证码的请求:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    http.authorizeRequests()</span><br><span class="line">        .antMatchers(<span class="string">&quot;/code.jpg&quot;</span>).permitAll()</span><br><span class="line">        .antMatchers(<span class="string">&quot;/hello&quot;</span>).authenticated()</span><br><span class="line">        .antMatchers(<span class="string">&quot;/admin&quot;</span>).fullyAuthenticated()</span><br><span class="line">        .antMatchers(<span class="string">&quot;/remember&quot;</span>).rememberMe()</span><br><span class="line">        .and()</span><br><span class="line">        .formLogin()</span><br><span class="line">        .permitAll()</span><br><span class="line">        .and()</span><br><span class="line">        .csrf()</span><br><span class="line">        .disable()</span><br><span class="line">        .sessionManagement()</span><br><span class="line">        .maximumSessions(<span class="number">1</span>)</span><br><span class="line">        .maxSessionsPreventsLogin(<span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问/code.jpg就可以获取验证码了。</p>
+<h4 id="3-2-提供自定义的ProviderManager"><a href="#3-2-提供自定义的ProviderManager" class="headerlink" title="3.2 提供自定义的ProviderManager"></a>3.2 提供自定义的ProviderManager</h4><p>前面我们说，所有的 AuthenticationProvider 都是放在 ProviderManager 中统一管理的，所以接下来我们就要自己提供 ProviderManager。</p>
+<p>首先，提供自定义的VerifyCodeAuthenticationProvider：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VerifyCodeAuthenticationProvider</span> <span class="keyword">extends</span> <span class="title">DaoAuthenticationProvider</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">additionalAuthenticationChecks</span><span class="params">(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication)</span> <span class="keyword">throws</span> AuthenticationException </span>&#123;</span><br><span class="line">        <span class="comment">// 完成验证码的校验</span></span><br><span class="line">        ServletRequestAttributes requestAttributes =</span><br><span class="line">            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();</span><br><span class="line">        HttpServletRequest request = requestAttributes.getRequest();</span><br><span class="line">        <span class="comment">// 取出session中的验证码</span></span><br><span class="line">        String verfiyCode = (String) request.getSession().getAttribute(<span class="string">&quot;verfiyCode&quot;</span>);</span><br><span class="line">        <span class="comment">// 取出前端传递过来的验证码</span></span><br><span class="line">        String code = request.getParameter(<span class="string">&quot;code&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(verfiyCode == <span class="keyword">null</span> || code == <span class="keyword">null</span> || !verfiyCode.equals(code)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> AuthenticationServiceException(<span class="string">&quot;验证码错误&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 调用DaoAuthenticationProvider的additionalAuthenticationChecks方法完成密码比对</span></span><br><span class="line">        <span class="keyword">super</span>.additionalAuthenticationChecks(userDetails, authentication);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后注入自定义的 VerifyCodeAuthenticationProvider，这一切操作都在 SecurityConfig 中完成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfig</span>  <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">PasswordEncoder <span class="title">passwordEncoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NoOpPasswordEncoder.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 将用户存在内存中,提供一个userDetailService</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> UserDetailsService <span class="title">userDetailsService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        InMemoryUserDetailsManager manager = <span class="keyword">new</span> InMemoryUserDetailsManager();</span><br><span class="line">        manager.createUser(User.withUsername(<span class="string">&quot;user&quot;</span>).password(<span class="string">&quot;123&quot;</span>).roles(<span class="string">&quot;admin&quot;</span>).build());</span><br><span class="line">        <span class="keyword">return</span> manager;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> VerifyCodeAuthenticationProvider <span class="title">verifyCodeAuthenticationProvider</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        VerifyCodeAuthenticationProvider verifyCodeAuthenticationProvider =</span><br><span class="line">            <span class="keyword">new</span> VerifyCodeAuthenticationProvider();</span><br><span class="line">        <span class="comment">// 需要提供userDetail，不然会报错</span></span><br><span class="line">        verifyCodeAuthenticationProvider.setUserDetailsService(userDetailsService());</span><br><span class="line">        <span class="keyword">return</span> verifyCodeAuthenticationProvider;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 通过重写 authenticationManager 方法来提供一个自己的 AuthenticationManager，实际上就是 ProviderManager，在创建 ProviderManager 时，加入自己的 verifyCodeAuthenticationProvider。</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> ProviderManager <span class="title">myProviderManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 可以传List,也可以传可变参数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ProviderManager(Arrays.asList(verifyCodeAuthenticationProvider()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        http.authorizeRequests()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/code.jpg&quot;</span>).permitAll()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/hello&quot;</span>).authenticated()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/admin&quot;</span>).fullyAuthenticated()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/remember&quot;</span>).rememberMe()</span><br><span class="line">            .and()</span><br><span class="line">            .formLogin()</span><br><span class="line">            .permitAll()</span><br><span class="line">            .and()</span><br><span class="line">            .csrf()</span><br><span class="line">            .disable()</span><br><span class="line">            .sessionManagement()</span><br><span class="line">            .maximumSessions(<span class="number">1</span>)</span><br><span class="line">            .maxSessionsPreventsLogin(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>创建VerifyCodeAuthenticationProvider，需要提供 UserDetailService 和 PasswordEncoder 实例。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>一毛也是爱~</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="Kim.Zhang 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+  <div class="post-widgets">
+    <div class="social-share">
+      
+      
+        <div id="needsharebutton-postbottom">
+          <span class="btn">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </span>
+        </div>
+      
+    </div>
+  
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2021/11/21/Spring Cloud/nginx/" rel="next" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2021/11/21/SpringBoot/SpringBoot/" rel="prev" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/1.jpg"
+      alt="Kim.Zhang">
+  <p class="site-author-name" itemprop="name">Kim.Zhang</p>
+  <div class="site-description motion-element" itemprop="description">且行且珍惜</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:woshizhangjinming@vip.qq.com" title="E-Mail &rarr; mailto:woshizhangjinming@vip.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/6196561949" title="Weibo &rarr; https://weibo.com/6196561949" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Authentication接口简析"><span class="nav-number">1.</span> <span class="nav-text">1. Authentication接口简析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DaoAuthenticationProvider简析"><span class="nav-number">2.</span> <span class="nav-text">2. DaoAuthenticationProvider简析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-自定义认证流程"><span class="nav-number">3.</span> <span class="nav-text">3. 自定义认证流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-验证码生成"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 验证码生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-提供自定义的ProviderManager"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 提供自定义的ProviderManager</span></a></li></ol></li></ol></div>
+            
+
+            
+            
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+
+    </div>
+  </aside>
+  
+  
+
+  <div id="sidebar-dimmer"></div>
+ 
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim.Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">574k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:42</span>
+</div>
+
+
+<div class="busuanzi-count">
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      本站总访问量 
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv">4</span>
+    </span>
+    <span> 次 </span>
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      有 
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv">309</span>
+    </span>
+    <span> 人看我的博客啦 </span>
+  <span class="post-meta-divider">|</span>
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共161k字</span>
+</div>
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/08/2019 14:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+
+
+  
+  
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+
+    
+  
+  <div id="needsharebutton-float">
+    <span class="btn">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+<script src="/lib/needsharebutton/needsharebutton.js"></script>
+<script>
+    pbOptions = {};
+      pbOptions.iconStyle = "box";
+    
+      pbOptions.boxForm = "horizontal";
+    
+      pbOptions.position = "bottomCenter";
+    
+      pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-postbottom', pbOptions);
+    flOptions = {};
+      flOptions.iconStyle = "box";
+    
+      flOptions.boxForm = "horizontal";
+    
+      flOptions.position = "middleRight";
+    
+      flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-float', flOptions);
+</script>
+
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  if (CONFIG.page.isPost) {
+    bookmark.scrollToMark('auto', "#更多");
+  } else {
+    bookmark.loadBookmark();
+  }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+</body>
+<script type="text/javascript" src="/js/clicklove.js"></script>
+</html>
