@@ -191,7 +191,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -204,7 +204,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -217,7 +217,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -344,7 +344,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>3k</span>
+              <span>2.8k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -379,7 +379,7 @@
 </ul>
 </li>
 </ul>
-<h4 id="栗子1：ConcurrentLinkedQueue基本操作"><a href="#栗子1：ConcurrentLinkedQueue基本操作" class="headerlink" title="栗子1：ConcurrentLinkedQueue基本操作"></a>栗子1：ConcurrentLinkedQueue基本操作</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoThread29</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        ConcurrentLinkedQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ConcurrentLinkedQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        queue.add(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// add方法实际调用了offer方法</span></span><br><span class="line">        queue.add(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">// offer方法与add没有区别</span></span><br><span class="line">        queue.offer(<span class="number">3</span>);</span><br><span class="line">        queue.offer(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//不允许添加null元素</span></span><br><span class="line"><span class="comment">//        queue.add(null);</span></span><br><span class="line">        System.out.println(queue);</span><br><span class="line">        System.out.println(<span class="string">&quot;[1]peek=&quot;</span> + queue.peek()); <span class="comment">//读取头元素,但是不移除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;[2]size=&quot;</span> + queue.size()); <span class="comment">//peek方法不会导致size改变</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;[3]poll=&quot;</span> + queue.poll()); <span class="comment">//读取头元素，并且移除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;[4]size=&quot;</span> + queue.size()); <span class="comment">//poll方法导致size改变</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;[5]poll=&quot;</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">&quot;[6]poll=&quot;</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">&quot;[7]poll=&quot;</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">&quot;[8]size=&quot;</span> + queue.size());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;peek=&quot;</span> + queue.peek()); <span class="comment">//队列为空, 读取头元素，返回null</span></span><br><span class="line">        System.out.println(<span class="string">&quot;pool=&quot;</span> + queue.poll()); <span class="comment">//队列为空, 读取头元素并移除, 返回null</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="栗子1：ConcurrentLinkedQueue基本操作"><a href="#栗子1：ConcurrentLinkedQueue基本操作" class="headerlink" title="栗子1：ConcurrentLinkedQueue基本操作"></a>栗子1：ConcurrentLinkedQueue基本操作</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoThread29</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        ConcurrentLinkedQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ConcurrentLinkedQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        queue.add(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// add方法实际调用了offer方法</span></span><br><span class="line">        queue.add(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">// offer方法与add没有区别</span></span><br><span class="line">        queue.offer(<span class="number">3</span>);</span><br><span class="line">        queue.offer(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//不允许添加null元素</span></span><br><span class="line"><span class="comment">//        queue.add(null);</span></span><br><span class="line">        System.out.println(queue);</span><br><span class="line">        System.out.println(<span class="string">"[1]peek="</span> + queue.peek()); <span class="comment">//读取头元素,但是不移除</span></span><br><span class="line">        System.out.println(<span class="string">"[2]size="</span> + queue.size()); <span class="comment">//peek方法不会导致size改变</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"[3]poll="</span> + queue.poll()); <span class="comment">//读取头元素，并且移除</span></span><br><span class="line">        System.out.println(<span class="string">"[4]size="</span> + queue.size()); <span class="comment">//poll方法导致size改变</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"[5]poll="</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">"[6]poll="</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">"[7]poll="</span> + queue.poll());</span><br><span class="line">        System.out.println(<span class="string">"[8]size="</span> + queue.size());</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"peek="</span> + queue.peek()); <span class="comment">//队列为空, 读取头元素，返回null</span></span><br><span class="line">        System.out.println(<span class="string">"pool="</span> + queue.poll()); <span class="comment">//队列为空, 读取头元素并移除, 返回null</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">[<span class="number">1</span>]peek=<span class="number">1</span></span><br><span class="line">[<span class="number">2</span>]size=<span class="number">4</span></span><br><span class="line">[<span class="number">3</span>]poll=<span class="number">1</span></span><br><span class="line">[<span class="number">4</span>]size=<span class="number">3</span></span><br><span class="line">[<span class="number">5</span>]poll=<span class="number">2</span></span><br><span class="line">[<span class="number">6</span>]poll=<span class="number">3</span></span><br><span class="line">[<span class="number">7</span>]poll=<span class="number">4</span></span><br><span class="line">[<span class="number">8</span>]size=<span class="number">0</span></span><br><span class="line">peek=<span class="keyword">null</span></span><br><span class="line">pool=<span class="keyword">null</span></span><br></pre></td></tr></table></figure>
@@ -391,7 +391,14 @@
 <ul>
 <li><p>add：如果队列满了，抛出异常</p>
 <ul>
-<li>```java<br>java.lang.IllegalStateException: Queue full<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* offer：如果队列满了，不阻塞，不抛出异常。可以设置最大阻塞时间。</span><br><span class="line"></span><br><span class="line">  * ```java</span><br><span class="line">    // 可设置最大阻塞时间,5秒,如果队列还是满的,则不阻塞，不抛出异常</span><br><span class="line">    queue.offer(6, 5, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure></li>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalStateException: Queue full</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>offer：如果队列满了，不阻塞，不抛出异常。可以设置最大阻塞时间。</p>
+<ul>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 可设置最大阻塞时间,5秒,如果队列还是满的,则不阻塞，不抛出异常</span></span><br><span class="line">queue.offer(<span class="number">6</span>, <span class="number">5</span>, TimeUnit.SECONDS);</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
 </li>
 <li><p>put：如果队列满了，永远阻塞，不抛出异常</p>
@@ -404,18 +411,32 @@
 </li>
 <li><p>poll：读取头元素，并移除。如果队列为空,返回null,不阻塞, 不抛异常。可以设置最大最大阻塞时间</p>
 <ul>
-<li>```java<br>// 可指定阻塞时间,2秒,如果队列依然为空,则返回null,不抛异常<br>queue.poll(2, TimeUnit.SECONDS)<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  * take：读取头元素，并移除。如果队列为空,则永远阻塞,不抛出异常</span><br><span class="line"></span><br><span class="line">* 转换方法</span><br><span class="line"></span><br><span class="line">  * drainTo：取出queue中指定个数的元素放入集合中,并移除。如果队列为空时，不阻塞，不抛出异常</span><br><span class="line"></span><br><span class="line">    * ```java</span><br><span class="line">      queue.drainTo(list, 2);</span><br></pre></td></tr></table></figure></li>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 可指定阻塞时间,2秒,如果队列依然为空,则返回null,不抛异常</span></span><br><span class="line">queue.poll(<span class="number">2</span>, TimeUnit.SECONDS)</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
+</li>
+<li><p>take：读取头元素，并移除。如果队列为空,则永远阻塞,不抛出异常</p>
+</li>
+</ul>
+</li>
+<li><p>转换方法</p>
+<ul>
+<li><p>drainTo：取出queue中指定个数的元素放入集合中,并移除。如果队列为空时，不阻塞，不抛出异常</p>
+<ul>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">queue.drainTo(list, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
 </li>
 </ul>
-<h4 id="栗子1：drainTo转换为List"><a href="#栗子1：drainTo转换为List" class="headerlink" title="栗子1：drainTo转换为List"></a>栗子1：drainTo转换为List</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testTake2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ArrayBlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ArrayBlockingQueue&lt;Integer&gt;(<span class="number">3</span>);</span><br><span class="line">        queue.add(<span class="number">1</span>);</span><br><span class="line">        queue.add(<span class="number">2</span>);</span><br><span class="line">        queue.add(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">        queue.drainTo(list, <span class="number">2</span>); <span class="comment">// 取出queue中指定个数的元素放入list中,并移除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;list&gt;&gt;&quot;</span> + list);</span><br><span class="line">        System.out.println(<span class="string">&quot;queue&gt;&gt;&quot;</span> + queue);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="栗子1：drainTo转换为List"><a href="#栗子1：drainTo转换为List" class="headerlink" title="栗子1：drainTo转换为List"></a>栗子1：drainTo转换为List</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testTake2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ArrayBlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ArrayBlockingQueue&lt;Integer&gt;(<span class="number">3</span>);</span><br><span class="line">        queue.add(<span class="number">1</span>);</span><br><span class="line">        queue.add(<span class="number">2</span>);</span><br><span class="line">        queue.add(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">        queue.drainTo(list, <span class="number">2</span>); <span class="comment">// 取出queue中指定个数的元素放入list中,并移除</span></span><br><span class="line">        System.out.println(<span class="string">"list&gt;&gt;"</span> + list);</span><br><span class="line">        System.out.println(<span class="string">"queue&gt;&gt;"</span> + queue);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list&gt;&gt;[<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">queue&gt;&gt;[<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
 
-<h4 id="栗子2：空队列drainTo转换"><a href="#栗子2：空队列drainTo转换" class="headerlink" title="栗子2：空队列drainTo转换"></a>栗子2：空队列drainTo转换</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testTake3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ArrayBlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ArrayBlockingQueue&lt;Integer&gt;(<span class="number">3</span>);</span><br><span class="line">    queue.add(<span class="number">1</span>);</span><br><span class="line">    queue.add(<span class="number">2</span>);</span><br><span class="line">    queue.add(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">    queue.drainTo(list); <span class="comment">// 取出queue中的全部元素放入list中,并移除</span></span><br><span class="line">    System.out.println(<span class="string">&quot;1&gt;&gt;&quot;</span> + list);</span><br><span class="line">    System.out.println(<span class="string">&quot;2&gt;&gt;&quot;</span> + queue);</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;Integer&gt; list1 = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">    queue.drainTo(list1); <span class="comment">// 当队列为空时不抛出异常</span></span><br><span class="line">    System.out.println(<span class="string">&quot;3&gt;&gt;&quot;</span> + list1);</span><br><span class="line">    System.out.println(<span class="string">&quot;4&gt;&gt;&quot;</span> + queue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="栗子2：空队列drainTo转换"><a href="#栗子2：空队列drainTo转换" class="headerlink" title="栗子2：空队列drainTo转换"></a>栗子2：空队列drainTo转换</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testTake3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ArrayBlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> ArrayBlockingQueue&lt;Integer&gt;(<span class="number">3</span>);</span><br><span class="line">    queue.add(<span class="number">1</span>);</span><br><span class="line">    queue.add(<span class="number">2</span>);</span><br><span class="line">    queue.add(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">    queue.drainTo(list); <span class="comment">// 取出queue中的全部元素放入list中,并移除</span></span><br><span class="line">    System.out.println(<span class="string">"1&gt;&gt;"</span> + list);</span><br><span class="line">    System.out.println(<span class="string">"2&gt;&gt;"</span> + queue);</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;Integer&gt; list1 = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">    queue.drainTo(list1); <span class="comment">// 当队列为空时不抛出异常</span></span><br><span class="line">    System.out.println(<span class="string">"3&gt;&gt;"</span> + list1);</span><br><span class="line">    System.out.println(<span class="string">"4&gt;&gt;"</span> + queue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>&gt;&gt;[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="number">2</span>&gt;&gt;[]</span><br><span class="line"><span class="number">3</span>&gt;&gt;[]</span><br><span class="line"><span class="number">4</span>&gt;&gt;[]</span><br></pre></td></tr></table></figure>
@@ -485,8 +506,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/并发/进阶篇/锁/" rel="prev" title="锁的分类.md">
-                  锁的分类.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/并发/进阶篇/可见性/" rel="prev" title="可见性.md">
+                  可见性.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -544,7 +565,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -577,7 +598,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -674,7 +697,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -745,7 +770,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -754,12 +779,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -783,7 +808,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

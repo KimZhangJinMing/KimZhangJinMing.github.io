@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Slippers_32x32.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Slippers_16x16.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/fancybox/source/jquery.fancybox.css">
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+<script>
+    (function () {
+        if ('') {
+            if (prompt('请输入文章密码') !== '') {
+                alert('密码错误！');
+                if (history.length === 1) {
+                    location.replace("http://xxxxxxx.xxx"); // 这里替换成你的首页地址
+                } else {
+                    history.back();
+                }
+            }
+        }
+    })();
+</script>
+
+  <meta name="description" content="AOP关于动态代理,Spring中有两种实现方式:JDK动态代理,CGLIB代理. JDK动态代理和CGLIB的区别:JDK动态代理: 通过与代理类实现同一接口来实现代理.  在Spring中注入的时候,应该使用接口注入,而不能使用实现类注入. 在通过applicationContext来getBean的时候,不能通过类.class的方式获取bean.因为bean已经被JDK代理为Proxy类,不">
+<meta name="keywords" content="Java,SSM,大学生活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kim.zhang">
+<meta property="og:url" content="http://www.zhang.kim/2022/01/21/Spring Cloud/文章/index.html">
+<meta property="og:site_name" content="kim.zhang">
+<meta property="og:description" content="AOP关于动态代理,Spring中有两种实现方式:JDK动态代理,CGLIB代理. JDK动态代理和CGLIB的区别:JDK动态代理: 通过与代理类实现同一接口来实现代理.  在Spring中注入的时候,应该使用接口注入,而不能使用实现类注入. 在通过applicationContext来getBean的时候,不能通过类.class的方式获取bean.因为bean已经被JDK代理为Proxy类,不">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-01-22T16:24:12.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kim.zhang">
+<meta name="twitter:description" content="AOP关于动态代理,Spring中有两种实现方式:JDK动态代理,CGLIB代理. JDK动态代理和CGLIB的区别:JDK动态代理: 通过与代理类实现同一接口来实现代理.  在Spring中注入的时候,应该使用接口注入,而不能使用实现类注入. 在通过applicationContext来getBean的时候,不能通过类.class的方式获取bean.因为bean已经被JDK代理为Proxy类,不">
+  <link rel="canonical" href="http://www.zhang.kim/2022/01/21/Spring Cloud/文章/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title> | kim.zhang</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">kim.zhang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">风在前，无惧!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.zhang.kim/2022/01/21/Spring Cloud/文章/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kim.Zhang">
+      <meta itemprop="description" content="且行且珍惜">
+      <meta itemprop="image" content="/images/1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kim.zhang">
+    </span>
+      <header class="post-header">
+
+        
+          <h1 class="post-title" itemprop="name headline">
+
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-01-21 23:52:19" itemprop="dateCreated datePublished" datetime="2022-01-21T23:52:19+08:00">2022-01-21</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-23 00:24:12" itemprop="dateModified" datetime="2022-01-23T00:24:12+08:00">2022-01-23</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>8.4k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>8 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><p>关于动态代理,Spring中有两种实现方式:<code>JDK动态代理</code>,<code>CGLIB代理</code>.</p>
+<p>JDK动态代理和CGLIB的区别:<br><strong>JDK动态代理</strong>: 通过与代理类实现同一接口来实现代理.</p>
+<ul>
+<li>在Spring中注入的时候,应该使用接口注入,而不能使用实现类注入.</li>
+<li>在通过applicationContext来getBean的时候,不能通过<code>类.class</code>的方式获取bean.因为bean已经被JDK代理为Proxy类,不再是原始的类了.</li>
+</ul>
+<p><strong>CGLIB</strong>: 通过修改字节码来实现代理.</p>
+<ul>
+<li>在Spring中注入时,可以使用接口或实现类来注入.</li>
+<li>在通过applicationContext来getBean的时候,可以通过接口或实现类获取bean</li>
+</ul>
+<p>Spring5中如果实现了接口,默认使用<code>JDK动态代理</code>,如果继承类使用<code>CGLIB代理</code>.<br>SpringBoot2.0中默认使用<code>CGLIB代理</code>.如果想使用JDK代理,可以设置proxy-target-class=false来强制使用JDK代理.</p>
+<p>proxy-target-class这个属性值在以下几个地方存在,也就是以下几种情况下bean会被代理:<br>1.@EnableAspectJAutoProxy<br>开启AOP功能,如果bean的方法存在切面,bean会被代理.<code>Springboot2.0中默认使用CGLIB代理</code>.<br>可以在配置文件中设置<code>spirng.aop.proxy-target-class=false</code>来强制使用JDK代理.在@EnableAspectJAutoProxy(proxyTargetClass = false)在Springboot2.0中已经不生效.<br>如果在配置文件中设置<code>spring.aop.auto=false</code>,则AopAutoConfiguration自动配置不生效,此时如果使用@EnableAspectJAutoProxy则生效.代理方式取决于注解上指定的proxy-target-class的值.<br>2.@EnableCaching<br>3.@EnableTransactionManagement<br>开启事务功能</p>
+<p>4.@EnableAsync:<br>如果类存在@Async,bean会被代理.<code>代理方式取决于bean有没有实现接口</code>.当然,可以通过<code>@EnableAsync(proxyTargetClass = true)</code>来设置使用@Async时强制使用CGLIB代理.</p>
+<p>如果bean上同时存在切面和@Async.也就是@EnableAspectJAutoProxy和@EnableAsync同时生效,<code>bean的代理方式取决于@EnableAspectJAutoProxy</code>.因为在为@Async生成代理的时候,如果bean已经被代理了,则不再进行代理,直接将@Async加入切面即可.</p>
+<h3 id="proxy-target-class配置"><a href="#proxy-target-class配置" class="headerlink" title="proxy-target-class配置"></a>proxy-target-class配置</h3><p>在Springboot2.0中,proxy-target-class可以在多个地方进行设置:<br>1.配置文件中设置<code>spring.aop.proxy-target-class</code><br>2.配置类上注解@EnableAspectJAutoProxy,@EnableCaching,@EnableTransactionManagement,@EnableAsync</p>
+<p>那么,这么多地方可以设置proxy-target-class,谁的优先级比较高,最终proxy-target-class的值由谁决定呢?</p>
+<p>@EnableCaching,@EnableTransactionManagement,这两个注解会导入<code>AutoProxyRegister</code>,而AutoProxyRegister类里面的registerBeanDefinitions方法,会扫描配置类上的注解,并向容器中注入<code>InfrastructureAdvisorAutoProxyCreator</code>.<br>当@EnableTransactionManagement没有在配置类上显示指定时,springboot自动配置TransactionAutoConfigutartion(即使配置文件中<code>spring.aop.auto=false</code>也会向容器注入TransactionAutoConfiguration配置类)会读取配置文件中<code>spring.aop.proxy-target-class</code>,bean的代理方式由配置文件中的值决定.</p>
+<p>@EnableAsync比较特殊,它只是执行<code>AsyncAnnotationBeanPostProcessor</code>.而这个BeanPostProvessor的proxy-target-class只取决于@EnableAsync注解上的值.<br>当bean只存在@Async时,bean的代理方式完全由@EnableAsync注解上的proxy-target-class的值决定.<br>当bean存在@Async,又存在@Transactional时,bean的代理方式会被@EnableTransactionManagement上的proxy-target-class的值决定.</p>
+<p>而@EnableAspectJAutoProxy会倒导入<code>AspectJAutoProxyRegistrar</code>,而AspectJAutoProxyRegistrar类里面的registerBeanDefinitions方法会向容器中注入<code>AnnotationAwareAspectJAutoProxyCreator</code>.<br>配置文件中的<code>spring.aop.auto=true</code>相当于开启@EnableAspectJAutoProxy.如果配置文件中<code>spring.aop.auto=true</code>,则<code>AopAutoConfiguration</code>自动配置类会生效.相当于也会向容器中注入<code>AnnotationAwareAspectJAutoProxyCreator</code>.<br>在注入<code>AnnotationAwareAspectJAutoProxyCreator</code>后,会读取标记了注解@EnableAspectJAutoProxy上的proxy-target-class的值,<strong>不管是注解方式还是在配置文件中配置,只要有一个proxy-target-class的值是true,bean的代理方式就会使用CGLIB代理.</strong></p>
+<p>如果同时存在@EnableTransactionManagement｜@EnableCaching｜@EnableAspectJAutoProxy上,proxy-target-class的值由@EnableAspectJAutoProxy决定.<br>因为在AopConfigUtils类的静态代码块中,规定了优先级,AnnotationAwareAspectJAutoProxyCreator总是会覆盖前面的ProxyCreator.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果spring.aop.auto=false,也没有@EnableAspectJAutoProxy. 那么,只要有@EnableCaching｜@EnableTransactionManagement中的proxy-target-class有一个值为true,就使用CGLIB代理,因为<code>AutoProxyRegister</code>扫描到一个proxy-target-class的值为ture,就默认使用CGLIB代理了,而不会继续扫描第二个注解的proxy-target-class的值.</p>
+<p>综上所述,如果一个bean只有@Async,bean的代理方式由@EnableAsync的proxy-target-class决定.<br>如果一个bean有事务,有AOP切面,bean的代理方式由@EnableAspectJAutoProxy决定(如果配置文件中<code>spring.aop.auto=true</code>,则bean的代理方式由配置文件中<code>spring.aop.proxy-target-class</code>的值决定).而在Spirngboot2.0中,spring.aop.proxy-target-class默认值是true,bean默认是CGLIB代理.</p>
+<p>如果配置文件中<code>spring.aop.auto=true</code>,默认使用<code>CGLIB代理</code>.<strong>proxy-target-class的最终取值取决于两者,只要配置文件或配置类中有一个地方设置proxy-target-class=true,就使用CGLIB代理.只有两个地方都设置proxy-target-calss=fasle才使用JDK动态代理.</strong><br>如果配置文件中<code>spring.aop.auto=false</code>,proxy-target-class的值仅仅受注解配置影响.如果存在多个@Enablexxx注解,只要有一个proxy-target-classd的值为ture,就默认使用CGLIB代理.</p>
+<p><a href="https://cloud.tencent.com/developer/article/1585702" target="_blank" rel="noopener">proxy-target-class的设置</a></p>
+<h3 id="EnableTransactionManagement"><a href="#EnableTransactionManagement" class="headerlink" title="@EnableTransactionManagement"></a>@EnableTransactionManagement</h3><p>@EnableTransactionManagement默认使用JDK动态代理,导入了TransactionManagementConfigurationSelector.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Import</span>(TransactionManagementConfigurationSelector<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> @<span class="title">interface</span> <span class="title">EnableTransactionManagement</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认使用JDK动态代理，如果proxyTargetClass=true则使用CGLIB代理</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">proxyTargetClass</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AdviceMode有PROXY和ASPJECTJ两种，默认是PROXY</span></span><br><span class="line">	<span class="function">AdviceMode <span class="title">mode</span><span class="params">()</span> <span class="keyword">default</span> AdviceMode.PROXY</span>;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">order</span><span class="params">()</span> <span class="keyword">default</span> Ordered.LOWEST_PRECEDENCE</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionManagementConfigurationSelector</span> <span class="keyword">extends</span> <span class="title">AdviceModeImportSelector</span>&lt;<span class="title">EnableTransactionManagement</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">    根据@EnableTransactionManagement指定的mode模式导入配置类.</span></span><br><span class="line"><span class="comment">    mode默认是PROXY,此时会导入AutoProxyRegistrar和ProxyTransactionManagementConfiguration两个配置类</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">protected</span> String[] selectImports(AdviceMode adviceMode) &#123;</span><br><span class="line">		<span class="keyword">switch</span> (adviceMode) &#123;</span><br><span class="line">			<span class="keyword">case</span> PROXY:</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">new</span> String[] &#123;AutoProxyRegistrar<span class="class">.<span class="keyword">class</span>.<span class="title">getName</span>(),</span></span><br><span class="line"><span class="class">						<span class="title">ProxyTransactionManagementConfiguration</span>.<span class="title">class</span>.<span class="title">getName</span>()&#125;</span>;</span><br><span class="line">			<span class="keyword">case</span> ASPECTJ:</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">new</span> String[] &#123;determineTransactionAspectClass()&#125;;</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AutoProxyRegistrar:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoProxyRegistrar</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Log logger = LogFactory.getLog(getClass());</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">boolean</span> candidateFound = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 获取启动类上所有的注解</span></span><br><span class="line">		Set&lt;String&gt; annTypes = importingClassMetadata.getAnnotationTypes();</span><br><span class="line">		<span class="keyword">for</span> (String annType : annTypes) &#123;</span><br><span class="line">            <span class="comment">// 循环每个注解，获取每个注解的所有属性</span></span><br><span class="line">			AnnotationAttributes candidate = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);</span><br><span class="line">			<span class="keyword">if</span> (candidate == <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">            <span class="comment">// 所有和代理有关的注解都会有mode和proxyTargetClass的属性</span></span><br><span class="line">            <span class="comment">// 如果mode是PROXY的模式，创建InfrastructureAdvisorAutoProxyCreator,并向容器中导入internalAutoProxyCreator</span></span><br><span class="line">            <span class="comment">// 如果proxyTargetClass=true，从容器中获取internalAutoProxyCreator，并设置proxyTargetClass=true,强制使用CGLIB代理</span></span><br><span class="line">			Object mode = candidate.get(<span class="string">"mode"</span>);</span><br><span class="line">			Object proxyTargetClass = candidate.get(<span class="string">"proxyTargetClass"</span>);</span><br><span class="line">			<span class="keyword">if</span> (mode != <span class="keyword">null</span> &amp;&amp; proxyTargetClass != <span class="keyword">null</span> &amp;&amp; AdviceMode<span class="class">.<span class="keyword">class</span> </span>== mode.getClass() &amp;&amp;</span><br><span class="line">					Boolean<span class="class">.<span class="keyword">class</span> </span>== proxyTargetClass.getClass()) &#123;</span><br><span class="line">				candidateFound = <span class="keyword">true</span>;</span><br><span class="line">                <span class="comment">// 如果有多个proxy-target-class,只要找到第一个proxy-target-class=true,就使用CGLIB代理了,其他的proxy-target-class不再生效</span></span><br><span class="line">				<span class="keyword">if</span> (mode == AdviceMode.PROXY) &#123;</span><br><span class="line">					AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);</span><br><span class="line">					<span class="keyword">if</span> ((Boolean) proxyTargetClass) &#123;</span><br><span class="line">						AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);</span><br><span class="line">						<span class="keyword">return</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (!candidateFound &amp;&amp; logger.isInfoEnabled()) &#123;</span><br><span class="line">			String name = getClass().getSimpleName();</span><br><span class="line">			logger.info(String.format(<span class="string">"%s was imported but no annotations were found "</span> +</span><br><span class="line">					<span class="string">"having both 'mode' and 'proxyTargetClass' attributes of type "</span> +</span><br><span class="line">					<span class="string">"AdviceMode and boolean respectively. This means that auto proxy "</span> +</span><br><span class="line">					<span class="string">"creator registration and configuration may not have occurred as "</span> +</span><br><span class="line">					<span class="string">"intended, and components may not be proxied as expected. Check to "</span> +</span><br><span class="line">					<span class="string">"ensure that %s has been @Import'ed on the same class where these "</span> +</span><br><span class="line">					<span class="string">"annotations are declared; otherwise remove the import of %s "</span> +</span><br><span class="line">					<span class="string">"altogether."</span>, name, name, name));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ProxyTransactionManagementConfiguration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>(proxyBeanMethods = <span class="keyword">false</span>)</span><br><span class="line"><span class="meta">@Role</span>(BeanDefinition.ROLE_INFRASTRUCTURE)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyTransactionManagementConfiguration</span> <span class="keyword">extends</span> <span class="title">AbstractTransactionManagementConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span>(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)</span><br><span class="line">	<span class="meta">@Role</span>(BeanDefinition.ROLE_INFRASTRUCTURE)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> BeanFactoryTransactionAttributeSourceAdvisor <span class="title">transactionAdvisor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">			TransactionAttributeSource transactionAttributeSource, TransactionInterceptor transactionInterceptor)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		BeanFactoryTransactionAttributeSourceAdvisor advisor = <span class="keyword">new</span> BeanFactoryTransactionAttributeSourceAdvisor();</span><br><span class="line">		advisor.setTransactionAttributeSource(transactionAttributeSource);</span><br><span class="line">		advisor.setAdvice(transactionInterceptor);</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.enableTx != <span class="keyword">null</span>) &#123;</span><br><span class="line">			advisor.setOrder(<span class="keyword">this</span>.enableTx.&lt;Integer&gt;getNumber(<span class="string">"order"</span>));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> advisor;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@Role</span>(BeanDefinition.ROLE_INFRASTRUCTURE)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> TransactionAttributeSource <span class="title">transactionAttributeSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> AnnotationTransactionAttributeSource();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@Role</span>(BeanDefinition.ROLE_INFRASTRUCTURE)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> TransactionInterceptor <span class="title">transactionInterceptor</span><span class="params">(TransactionAttributeSource transactionAttributeSource)</span> </span>&#123;</span><br><span class="line">		TransactionInterceptor interceptor = <span class="keyword">new</span> TransactionInterceptor();</span><br><span class="line">		interceptor.setTransactionAttributeSource(transactionAttributeSource);</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.txManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">			interceptor.setTransactionManager(<span class="keyword">this</span>.txManager);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> interceptor;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>一毛也是爱~</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="Kim.Zhang 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+  <div class="post-widgets">
+    <div class="social-share">
+      
+      
+        <div id="needsharebutton-postbottom">
+          <span class="btn">
+            <i class="fa fa-share-alt" aria-hidden="true"></i>
+          </span>
+        </div>
+      
+    </div>
+  
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2022/01/15/Spring Cloud/加密解密/" rel="next" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/1.jpg"
+      alt="Kim.Zhang">
+  <p class="site-author-name" itemprop="name">Kim.Zhang</p>
+  <div class="site-description motion-element" itemprop="description">且行且珍惜</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:woshizhangjinming@vip.qq.com" title="E-Mail &rarr; mailto:woshizhangjinming@vip.qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://weibo.com/6196561949" title="Weibo &rarr; https://weibo.com/6196561949" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP"><span class="nav-number">1.</span> <span class="nav-text">AOP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proxy-target-class配置"><span class="nav-number">2.</span> <span class="nav-text">proxy-target-class配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnableTransactionManagement"><span class="nav-number">3.</span> <span class="nav-text">@EnableTransactionManagement</span></a></li></ol></div>
+            
+
+            
+            
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+
+    </div>
+  </aside>
+  
+  
+
+  <div id="sidebar-dimmer"></div>
+ 
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kim.Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">629k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:32</span>
+</div>
+
+
+<div class="busuanzi-count">
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      本站总访问量 
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv">4</span>
+    </span>
+    <span> 次 </span>
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      有 
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv">309</span>
+    </span>
+    <span> 人看我的博客啦 </span>
+  <span class="post-meta-divider">|</span>
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共176.7k字</span>
+</div>
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/08/2019 14:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+
+
+  
+  
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+
+    
+  
+  <div id="needsharebutton-float">
+    <span class="btn">
+      <i class="fa fa-share-alt" aria-hidden="true"></i>
+    </span>
+  </div>
+<script src="/lib/needsharebutton/needsharebutton.js"></script>
+<script>
+    pbOptions = {};
+      pbOptions.iconStyle = "box";
+    
+      pbOptions.boxForm = "horizontal";
+    
+      pbOptions.position = "bottomCenter";
+    
+      pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-postbottom', pbOptions);
+    flOptions = {};
+      flOptions.iconStyle = "box";
+    
+      flOptions.boxForm = "horizontal";
+    
+      flOptions.position = "middleRight";
+    
+      flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+    
+    new needShareButton('#needsharebutton-float', flOptions);
+</script>
+
+
+  </div>
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  if (CONFIG.page.isPost) {
+    bookmark.scrollToMark('auto', "#更多");
+  } else {
+    bookmark.loadBookmark();
+  }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+</body>
+<script type="text/javascript" src="/js/clicklove.js"></script>
+</html>

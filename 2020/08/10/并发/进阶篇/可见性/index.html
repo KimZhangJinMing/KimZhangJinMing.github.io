@@ -80,12 +80,12 @@
 <meta property="og:site_name" content="kim.zhang">
 <meta property="og:description" content="为什么会有可见性问题 高速缓存的容量比主内存小，但是速度仅次于寄存器，所以在CPU和主内存之间就多了Cache层 线程间的对于共享变量的可见性问题不是直接由多核引起的，而是由多缓存引起的。如果所有个核心都只用一个缓存，那么也就不存在内存可见性问题了。 每个核心都会将自己需要的数据读到独占缓存中，数据修改后也是写入到缓存中，然后等待刷入到主存中。所以会导致有些核心读取的值是一个过期的值。  什么是主">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="d:/ming/images/image-20200723225040510.png">
+<meta property="og:image" content="d:%5Cming%5Cimages%5Cimage-20200723225040510.png">
 <meta property="og:updated_time" content="2021-11-21T04:56:33.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="可见性.md">
 <meta name="twitter:description" content="为什么会有可见性问题 高速缓存的容量比主内存小，但是速度仅次于寄存器，所以在CPU和主内存之间就多了Cache层 线程间的对于共享变量的可见性问题不是直接由多核引起的，而是由多缓存引起的。如果所有个核心都只用一个缓存，那么也就不存在内存可见性问题了。 每个核心都会将自己需要的数据读到独占缓存中，数据修改后也是写入到缓存中，然后等待刷入到主存中。所以会导致有些核心读取的值是一个过期的值。  什么是主">
-<meta name="twitter:image" content="d:/ming/images/image-20200723225040510.png">
+<meta name="twitter:image" content="d:%5Cming%5Cimages%5Cimage-20200723225040510.png">
   <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/进阶篇/可见性/">
 
 
@@ -193,7 +193,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -206,7 +206,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -219,7 +219,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -385,7 +385,7 @@
 <li>解决可见性问题的：在时间上，动作A发生在动作B之前，B保证能看见A，这就是happens-before。</li>
 <li>如果两个操作不具备happens-before，那么JVM是可以根据需要自由排序的，但是如果具备happens-before（比如新建线程时，run方法里面的语句一定发生在thread.start()之前），那么JVM也不能改变它们之间的顺序。</li>
 </ul>
-<h3 id="Happens-Before规则有哪些？"><a href="#Happens-Before规则有哪些？" class="headerlink" title="Happens-Before规则有哪些？"></a>Happens-Before规则有哪些？</h3><p><img src="D:\ming\images\image-20200723225040510.png" alt="image-20200723225040510"></p>
+<h3 id="Happens-Before规则有哪些？"><a href="#Happens-Before规则有哪些？" class="headerlink" title="Happens-Before规则有哪些？"></a>Happens-Before规则有哪些？</h3><p><img src="D:%5Cming%5Cimages%5Cimage-20200723225040510.png" alt="image-20200723225040510"></p>
 <h3 id="volatile是什么"><a href="#volatile是什么" class="headerlink" title="volatile是什么"></a>volatile是什么</h3><ul>
 <li>volatile是一种同步机制，比synchronized或者lock相关类更轻量，因为使用volatile并不会发生上下文切换等开销很大的行为</li>
 <li>如果一个变量被修饰成volatile，那么JVM就知道了这个变量可能会被并发修改</li>
@@ -464,8 +464,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/08/10/并发/进阶篇/锁/" rel="next" title="锁的分类.md">
-                  <i class="fa fa-chevron-left"></i> 锁的分类.md
+                <a href="/2020/08/10/并发/进阶篇/并发队列/" rel="next" title="并发队列.md">
+                  <i class="fa fa-chevron-left"></i> 并发队列.md
                 </a>
               
             </div>
@@ -474,8 +474,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/并发/进阶篇/原子性/" rel="prev" title="原子性.md">
-                  原子性.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/并发/进阶篇/单例模式/" rel="prev" title="单例模式.md">
+                  单例模式.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -533,7 +533,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -566,7 +566,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -663,7 +665,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -734,7 +738,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -743,12 +747,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -772,7 +776,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

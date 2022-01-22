@@ -191,7 +191,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -204,7 +204,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -217,7 +217,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -344,7 +344,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>472</span>
+              <span>452</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -369,10 +369,10 @@
       
         <p>条件注解可以解决策略模式多种实现类的问题。</p>
 <p>使用自定义条件注解需要自己编写一个类实现conidtion接口，并在配置类中使用@conditional注解。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">   <span class="meta">@Conditional(DatabaseCondition.class)</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Connect <span class="title">mysql</span><span class="params">()</span></span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> MySql(<span class="keyword">this</span>.host,<span class="keyword">this</span>.port);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">   <span class="meta">@Conditional</span>(DatabaseCondition<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">   <span class="title">public</span> <span class="title">Connect</span> <span class="title">mysql</span>()</span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> MySql(<span class="keyword">this</span>.host,<span class="keyword">this</span>.port);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
 <p>也可以使用spring自带的条件注解：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">  <span class="meta">@ConditionalOnProperty(value = &quot;database&quot;,havingValue = &quot;mysql&quot;,matchIfMissing = true)</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Connect <span class="title">mysql</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> MySql(<span class="keyword">this</span>.host,<span class="keyword">this</span>.port);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">  <span class="meta">@ConditionalOnProperty</span>(value = <span class="string">"database"</span>,havingValue = <span class="string">"mysql"</span>,matchIfMissing = <span class="keyword">true</span>)</span><br><span class="line">  <span class="function"><span class="keyword">public</span> Connect <span class="title">mysql</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> MySql(<span class="keyword">this</span>.host,<span class="keyword">this</span>.port);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
 <p>value的值是配置文件中的key。matchIfMissing相当于默认值。当在配置文件中找不到database的配置项时，默认将MySql这个类加入到IOC容器中。</p>
 
@@ -440,8 +440,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/SpringBoot/Bean/Autowired/" rel="prev" title="Autowaired.md">
-                  Autowaired.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/网络/四种复制文件的方法/" rel="prev" title="文件复制.md">
+                  文件复制.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -490,7 +490,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -523,7 +523,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -620,7 +622,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -672,7 +676,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -681,12 +685,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -710,7 +714,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

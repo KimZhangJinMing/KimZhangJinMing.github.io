@@ -191,7 +191,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -204,7 +204,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -217,7 +217,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -344,7 +344,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>1.9k</span>
+              <span>1.8k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -371,7 +371,7 @@
 <p>实现这个功能需要修改SpringBoot的源码。需要继承RequestMappingHandlerMapping，且实现getMappingForMethod方法，将其返回的RequestMappingInfo修改为我们自己的RequestMappingInfo。</p>
 <p>apiPackage是在配置文件中通过@Value注入的，且这个配置文件应该是SpringBoot默认的application.properties或者application.yml文件，因为我们没有使用@PropertySource来指定配置文件。</p>
 <p>此外还需注意的是，@Value注入属性，需要getter，setter方法，这里使用Lombok。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoPrefixUrlMapping</span> <span class="keyword">extends</span> <span class="title">RequestMappingHandlerMapping</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;api-package&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String apiPackage;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> RequestMappingInfo <span class="title">getMappingForMethod</span><span class="params">(Method method, Class&lt;?&gt; handlerType)</span> </span>&#123;</span><br><span class="line">        RequestMappingInfo requestMappingInfo = <span class="keyword">super</span>.getMappingForMethod(method, handlerType);</span><br><span class="line">        <span class="keyword">if</span> (requestMappingInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">            String prefix = <span class="keyword">this</span>.getPrefixUrl(handlerType);</span><br><span class="line">            <span class="keyword">return</span> RequestMappingInfo.paths(prefix).build().combine(requestMappingInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> requestMappingInfo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * get requestMapping package name and replace prefix</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> handlerType the handlerType of requestMapping</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> thr prefix of package name</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getPrefixUrl</span><span class="params">(Class&lt;?&gt; handlerType)</span> </span>&#123;</span><br><span class="line">        String packageName = handlerType.getPackage().getName();</span><br><span class="line">        <span class="comment">// replace package prefix to empty string</span></span><br><span class="line">        String dotPath = packageName.replaceAll(<span class="keyword">this</span>.apiPackage, <span class="string">&quot;&quot;</span>);</span><br><span class="line">        dotPath = dotPath.replace(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> dotPath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoPrefixUrlMapping</span> <span class="keyword">extends</span> <span class="title">RequestMappingHandlerMapping</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;api-package&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String apiPackage;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> RequestMappingInfo <span class="title">getMappingForMethod</span><span class="params">(Method method, Class&lt;?&gt; handlerType)</span> </span>&#123;</span><br><span class="line">        RequestMappingInfo requestMappingInfo = <span class="keyword">super</span>.getMappingForMethod(method, handlerType);</span><br><span class="line">        <span class="keyword">if</span> (requestMappingInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">            String prefix = <span class="keyword">this</span>.getPrefixUrl(handlerType);</span><br><span class="line">            <span class="keyword">return</span> RequestMappingInfo.paths(prefix).build().combine(requestMappingInfo);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> requestMappingInfo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * get requestMapping package name and replace prefix</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> handlerType the handlerType of requestMapping</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> thr prefix of package name</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getPrefixUrl</span><span class="params">(Class&lt;?&gt; handlerType)</span> </span>&#123;</span><br><span class="line">        String packageName = handlerType.getPackage().getName();</span><br><span class="line">        <span class="comment">// replace package prefix to empty string</span></span><br><span class="line">        String dotPath = packageName.replaceAll(<span class="keyword">this</span>.apiPackage, <span class="string">""</span>);</span><br><span class="line">        dotPath = dotPath.replace(<span class="string">"."</span>, <span class="string">"/"</span>);</span><br><span class="line">        <span class="keyword">return</span> dotPath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>那么SpringBoot怎么知道我们生成这个类呢？我们需要将它加入到IOC容器中。这里采用的是配置类，定义一个配置类实现WebMvcRegistrations接口，并将配置类加入到IOC容器中。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoPrefixUrlConfiguration</span> <span class="keyword">implements</span> <span class="title">WebMvcRegistrations</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestMappingHandlerMapping <span class="title">getRequestMappingHandlerMapping</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AutoPrefixUrlMapping();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -380,7 +380,7 @@
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">api-package</span> = <span class="string">com.sise.ming.api</span></span><br></pre></td></tr></table></figure>
 
 <p>controller：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/banner&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BannerController</span> </span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/banner"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BannerController</span> </span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
 
 
     </div>
@@ -437,8 +437,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/08/10/SpringBoot/加载第三方组件/" rel="next" title="加载第三方组件.md">
-                  <i class="fa fa-chevron-left"></i> 加载第三方组件.md
+                <a href="/2020/08/10/SpringBoot/springBoot热部署/" rel="next" title="SpringBoot热部署.md">
+                  <i class="fa fa-chevron-left"></i> SpringBoot热部署.md
                 </a>
               
             </div>
@@ -447,8 +447,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/SpringBoot/response与ResponseBody区别/" rel="prev" title="ResponseBody.md">
-                  ResponseBody.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/SpringBoot/SpringBoot日志/" rel="prev" title="SpringBoot日志.md">
+                  SpringBoot日志.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -497,7 +497,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -530,7 +530,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -627,7 +629,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -679,7 +683,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -688,12 +692,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -717,7 +721,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

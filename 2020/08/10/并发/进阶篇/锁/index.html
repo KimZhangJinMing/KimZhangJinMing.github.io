@@ -80,12 +80,12 @@
 <meta property="og:site_name" content="kim.zhang">
 <meta property="og:description" content="1.锁的分类 2.悲观锁和乐观锁 悲观锁（互斥同步锁） 典型例子：Synchronized、lock   乐观锁（非互斥同步锁） 典型例子：原子类、并发容器 使用CAS算法实现    3.悲观锁和乐观锁的开销对比 悲观锁的原始开销要高于乐观锁，但是特点是一劳永逸，临界区持锁时间就算越来越长，也不会对互斥锁的开销造成影响 乐观锁一开始的开销比悲观锁小，但是如果自旋时间很长或者不停重试，那么消耗的资源">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="d:/ming/images/2020011811250759.png">
+<meta property="og:image" content="d:%5Cming%5Cimages%5C2020011811250759.png">
 <meta property="og:updated_time" content="2021-11-21T04:56:33.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="锁的分类.md">
 <meta name="twitter:description" content="1.锁的分类 2.悲观锁和乐观锁 悲观锁（互斥同步锁） 典型例子：Synchronized、lock   乐观锁（非互斥同步锁） 典型例子：原子类、并发容器 使用CAS算法实现    3.悲观锁和乐观锁的开销对比 悲观锁的原始开销要高于乐观锁，但是特点是一劳永逸，临界区持锁时间就算越来越长，也不会对互斥锁的开销造成影响 乐观锁一开始的开销比悲观锁小，但是如果自旋时间很长或者不停重试，那么消耗的资源">
-<meta name="twitter:image" content="d:/ming/images/2020011811250759.png">
+<meta name="twitter:image" content="d:%5Cming%5Cimages%5C2020011811250759.png">
   <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/进阶篇/锁/">
 
 
@@ -193,7 +193,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -206,7 +206,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -219,7 +219,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -346,7 +346,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>2.9k</span>
+              <span>2.8k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -369,7 +369,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="1-锁的分类"><a href="#1-锁的分类" class="headerlink" title="1.锁的分类"></a>1.锁的分类</h3><p><img src="D:\ming\images\2020011811250759.png" alt="img"></p>
+        <h3 id="1-锁的分类"><a href="#1-锁的分类" class="headerlink" title="1.锁的分类"></a>1.锁的分类</h3><p><img src="D:%5Cming%5Cimages%5C2020011811250759.png" alt="img"></p>
 <h3 id="2-悲观锁和乐观锁"><a href="#2-悲观锁和乐观锁" class="headerlink" title="2.悲观锁和乐观锁"></a>2.悲观锁和乐观锁</h3><ul>
 <li>悲观锁（互斥同步锁）<ul>
 <li>典型例子：Synchronized、lock</li>
@@ -410,7 +410,7 @@
 </li>
 </ul>
 <p>升降级策略：只能降级，不能升级</p>
-<h4 id="栗子1：读锁插队"><a href="#栗子1：读锁插队" class="headerlink" title="栗子1：读锁插队"></a>栗子1：读锁插队</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/26 19:12</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 演示当队列中第一个不是写锁的时候，读锁是可以插队的</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentranceReadWriteLockTest</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 非公平锁才能有插队</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock reentrantReadWriteLock = <span class="keyword">new</span> ReentrantReadWriteLock(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.ReadLock readLock = reentrantReadWriteLock.readLock();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.WriteLock writeLock = reentrantReadWriteLock.writeLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;尝试获取读锁&quot;</span>);</span><br><span class="line">        readLock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;获取到了读锁&quot;</span>);</span><br><span class="line">            Thread.sleep(<span class="number">10</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;释放读锁&quot;</span>);</span><br><span class="line">            readLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;尝试获取写锁&quot;</span>);</span><br><span class="line">        writeLock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;获取到了写锁&quot;</span>);</span><br><span class="line">            Thread.sleep(<span class="number">40</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;释放写锁&quot;</span>);</span><br><span class="line">            writeLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ReentranceReadWriteLockTest reentranceReadWriteLockTest = <span class="keyword">new</span> ReentranceReadWriteLockTest();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.write(), <span class="string">&quot;thread-1&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">&quot;thread-2&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">&quot;thread-3&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.write(), <span class="string">&quot;thread-4&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            Thread[] threads = <span class="keyword">new</span> Thread[<span class="number">1000</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">                threads[i] = <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">&quot;子线程创建的Thread&quot;</span> + i);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threads.length; i++) &#123;</span><br><span class="line">                threads[i].start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="栗子1：读锁插队"><a href="#栗子1：读锁插队" class="headerlink" title="栗子1：读锁插队"></a>栗子1：读锁插队</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Ming</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2020/07/26 19:12</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 演示当队列中第一个不是写锁的时候，读锁是可以插队的</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentranceReadWriteLockTest</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 非公平锁才能有插队</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock reentrantReadWriteLock = <span class="keyword">new</span> ReentrantReadWriteLock(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.ReadLock readLock = reentrantReadWriteLock.readLock();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.WriteLock writeLock = reentrantReadWriteLock.writeLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">"尝试获取读锁"</span>);</span><br><span class="line">        readLock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">"获取到了读锁"</span>);</span><br><span class="line">            Thread.sleep(<span class="number">10</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">"释放读锁"</span>);</span><br><span class="line">            readLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">"尝试获取写锁"</span>);</span><br><span class="line">        writeLock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">"获取到了写锁"</span>);</span><br><span class="line">            Thread.sleep(<span class="number">40</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">"释放写锁"</span>);</span><br><span class="line">            writeLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ReentranceReadWriteLockTest reentranceReadWriteLockTest = <span class="keyword">new</span> ReentranceReadWriteLockTest();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.write(), <span class="string">"thread-1"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">"thread-2"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">"thread-3"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.write(), <span class="string">"thread-4"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            Thread[] threads = <span class="keyword">new</span> Thread[<span class="number">1000</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">                threads[i] = <span class="keyword">new</span> Thread(() -&gt; reentranceReadWriteLockTest.read(), <span class="string">"子线程创建的Thread"</span> + i);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threads.length; i++) &#123;</span><br><span class="line">                threads[i].start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="7-读写锁的适用场景"><a href="#7-读写锁的适用场景" class="headerlink" title="7.读写锁的适用场景"></a>7.读写锁的适用场景</h3><p>ReentranceReadWriteLock适用于读多写少的情况，合理使用可以进一步提高并发效率。</p>
 <h3 id="8-自旋锁"><a href="#8-自旋锁" class="headerlink" title="8.自旋锁"></a>8.自旋锁</h3><ul>
@@ -487,8 +487,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/08/10/并发/进阶篇/并发队列/" rel="next" title="并发队列.md">
-                  <i class="fa fa-chevron-left"></i> 并发队列.md
+                <a href="/2020/08/10/并发/基础篇/线程安全与Synchronized/" rel="next" title="synchronized.md">
+                  <i class="fa fa-chevron-left"></i> synchronized.md
                 </a>
               
             </div>
@@ -497,8 +497,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/并发/进阶篇/可见性/" rel="prev" title="可见性.md">
-                  可见性.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/并发/进阶篇/线程池/" rel="prev" title="线程池.md">
+                  线程池.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -556,7 +556,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -589,7 +589,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -686,7 +688,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -757,7 +761,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -766,12 +770,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -795,7 +799,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

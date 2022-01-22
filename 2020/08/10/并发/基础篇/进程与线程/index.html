@@ -80,14 +80,14 @@
 <meta property="og:site_name" content="kim.zhang">
 <meta property="og:description" content="操作系统、进程、线程的关系  操作系统将资源分配给进程，进程将资源分配给线程。但是CPU资源比较特殊，CPU资源是直接分配给线程的。 一个进程中至少会有一个线程，进程不能脱离进程而存在。 main函数启动的时候，会产生JVM进程，JVM进程会产生多条线程。main函数线程称为主线程。还有产生GC回收的守护线程。  JVM内存模型与线程的关系虽然对象是存在Java堆中的，但是对象的引用存放在虚拟机栈">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="d:/ming/images/image-20200621230048073.png">
-<meta property="og:image" content="d:/ming/images/image-20200621233341074.png">
-<meta property="og:image" content="d:/ming/images/image-20200715224217839.png">
+<meta property="og:image" content="d:%5Cming%5Cimages%5Cimage-20200621230048073.png">
+<meta property="og:image" content="d:%5Cming%5Cimages%5Cimage-20200621233341074.png">
+<meta property="og:image" content="d:%5Cming%5Cimages%5Cimage-20200715224217839.png">
 <meta property="og:updated_time" content="2021-11-21T04:56:33.450Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="进程与线程.md">
 <meta name="twitter:description" content="操作系统、进程、线程的关系  操作系统将资源分配给进程，进程将资源分配给线程。但是CPU资源比较特殊，CPU资源是直接分配给线程的。 一个进程中至少会有一个线程，进程不能脱离进程而存在。 main函数启动的时候，会产生JVM进程，JVM进程会产生多条线程。main函数线程称为主线程。还有产生GC回收的守护线程。  JVM内存模型与线程的关系虽然对象是存在Java堆中的，但是对象的引用存放在虚拟机栈">
-<meta name="twitter:image" content="d:/ming/images/image-20200621230048073.png">
+<meta name="twitter:image" content="d:%5Cming%5Cimages%5Cimage-20200621230048073.png">
   <link rel="canonical" href="http://www.zhang.kim/2020/08/10/并发/基础篇/进程与线程/">
 
 
@@ -195,7 +195,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -208,7 +208,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -221,7 +221,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -371,14 +371,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="操作系统、进程、线程的关系"><a href="#操作系统、进程、线程的关系" class="headerlink" title="操作系统、进程、线程的关系"></a>操作系统、进程、线程的关系</h3><p><img src="D:\ming\images\image-20200621230048073.png" alt="image-20200621230048073"></p>
+        <h3 id="操作系统、进程、线程的关系"><a href="#操作系统、进程、线程的关系" class="headerlink" title="操作系统、进程、线程的关系"></a>操作系统、进程、线程的关系</h3><p><img src="D:%5Cming%5Cimages%5Cimage-20200621230048073.png" alt="image-20200621230048073"></p>
 <ul>
 <li>操作系统将资源分配给进程，进程将资源分配给线程。但是CPU资源比较特殊，CPU资源是直接分配给线程的。</li>
 <li>一个进程中至少会有一个线程，进程不能脱离进程而存在。</li>
 <li>main函数启动的时候，会产生JVM进程，JVM进程会产生多条线程。main函数线程称为主线程。还有产生GC回收的守护线程。</li>
 </ul>
 <h3 id="JVM内存模型与线程的关系"><a href="#JVM内存模型与线程的关系" class="headerlink" title="JVM内存模型与线程的关系"></a>JVM内存模型与线程的关系</h3><p>虽然对象是存在Java堆中的，但是对象的引用存放在虚拟机栈中。</p>
-<p><img src="D:\ming\images\image-20200621233341074.png" alt="image-20200621233341074"></p>
+<p><img src="D:%5Cming%5Cimages%5Cimage-20200621233341074.png" alt="image-20200621233341074"></p>
 <h3 id="使用JDK工具观察线程"><a href="#使用JDK工具观察线程" class="headerlink" title="使用JDK工具观察线程"></a>使用JDK工具观察线程</h3><p>注意，如果没有将对应的命令加入到环境变量中，需要到JDK所在路径的bin目录下执行。</p>
 <p>在观察的时候，可以让main线程Sleep(Integer.MAX_VALUE)，目的是为了让JVM进程不停止，这样才能观察到线程。</p>
 <p>jps -lvm 可以看到系统中运行的进程。在使用jcmd的时候，需要带上进程的id。</p>
@@ -388,7 +388,7 @@
 <li>可视化工具 jvisualvm 有动态图查看线程的运行状态</li>
 <li>可视化工具 jconsole 可以查看Thread等类的属性等信息，可以单独对某个线程查看，可以检测死锁</li>
 </ul>
-<h3 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h3><p><img src="D:\ming\images\image-20200715224217839.png" alt="image-20200715224217839"></p>
+<h3 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h3><p><img src="D:%5Cming%5Cimages%5Cimage-20200715224217839.png" alt="image-20200715224217839"></p>
 <h3 id="线程的性能问题"><a href="#线程的性能问题" class="headerlink" title="线程的性能问题"></a>线程的性能问题</h3><p>上下文切换可以认为是内核（操作系统的核心）在 CPU 上对于进程（包括线程）进行以下的活动：（1）挂起一个进程，将这个进程在 CPU 中的状态（上下文）存储于内存中的某处，（2）在内存中检索下一个进程的上下文并将其在 CPU 的寄存器中恢复，（3）跳转到程序计数器所指向的位置（即跳转到进程被中断时的代码行），以恢复该进程。</p>
 <blockquote>
 <p>缓存开销:CPU重新缓存</p>
@@ -455,8 +455,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/08/10/并发/精通篇/CyclicBarrier/" rel="next" title="CyclicBarrier.md">
-                  <i class="fa fa-chevron-left"></i> CyclicBarrier.md
+                <a href="/2020/08/10/并发/进阶篇/unSafe/" rel="next" title="Unsafe.md">
+                  <i class="fa fa-chevron-left"></i> Unsafe.md
                 </a>
               
             </div>
@@ -465,8 +465,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2020/08/10/并发/基础篇/线程的启动与停止/" rel="prev" title="线程的启动与终止.md">
-                  线程的启动与终止.md <i class="fa fa-chevron-right"></i>
+                <a href="/2020/08/10/并发/基础篇/Yield/" rel="prev" title="yield方法.md">
+                  yield方法.md <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -524,7 +524,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -557,7 +557,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -654,7 +656,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -725,7 +729,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -734,12 +738,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -763,7 +767,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 

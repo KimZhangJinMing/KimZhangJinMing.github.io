@@ -191,7 +191,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">41</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">42</span></a>
 
   </li>
       
@@ -204,7 +204,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
       
@@ -217,7 +217,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">90</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">94</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -408,12 +408,12 @@
 <h3 id="3-redis作为数据库和作为缓存的选择"><a href="#3-redis作为数据库和作为缓存的选择" class="headerlink" title="3.redis作为数据库和作为缓存的选择"></a>3.redis作为数据库和作为缓存的选择</h3><h3 id="4-redis设置"><a href="#4-redis设置" class="headerlink" title="4.redis设置"></a>4.redis设置</h3><h4 id="4-1-远程连接设置"><a href="#4-1-远程连接设置" class="headerlink" title="4.1 远程连接设置"></a>4.1 远程连接设置</h4><blockquote>
 <p>1.修改redis.conf配置文件</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 指定可以访问redis的网段。默认值是<span class="built_in">bind</span> 127.0.0.1,只允许本地访问。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">bind</span> ip,即只允许ip指定的地址能远程访问redis，连localhost都无法访问</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">bind</span> 0.0.0.0 或注释掉这一行,即允许任何ip访问</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 保护模式，默认是protected-mode yes开启保护模式的</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果设置了<span class="built_in">bind</span>或者requirepass,则可以设置为yes,不影响远程访问</span></span><br><span class="line">protected-mode no</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 远程访问的密码,可以设置,也可以不设置,为了安全性,最好设置上密码</span></span><br><span class="line">requirepass root</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 指定可以访问redis的网段。默认值是<span class="built_in">bind</span> 127.0.0.1,只允许本地访问。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">bind</span> ip,即只允许ip指定的地址能远程访问redis，连localhost都无法访问</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">bind</span> 0.0.0.0 或注释掉这一行,即允许任何ip访问</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 保护模式，默认是protected-mode yes开启保护模式的</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果设置了<span class="built_in">bind</span>或者requirepass,则可以设置为yes,不影响远程访问</span></span><br><span class="line">protected-mode no</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 远程访问的密码,可以设置,也可以不设置,为了安全性,最好设置上密码</span></span><br><span class="line">requirepass root</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>2.检查防火墙</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 检查6379端口是否开放</span></span><br><span class="line">firewall-cmd --query-port=6379/tcp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 永久开放6379端口</span></span><br><span class="line">firewall-cmd --zone=public --add-port=6379/tcp --permanent</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看防火墙状态：</span></span><br><span class="line">firewall-cmd --state </span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动防火墙</span></span><br><span class="line">systemctl start firewalld</span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭防火墙</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"><span class="meta">#</span><span class="bash"> 检查防火墙开放的端口</span></span><br><span class="line">firewall-cmd --permanent --zone=public --list-ports</span><br><span class="line"><span class="meta">#</span><span class="bash"> 重启防火墙</span></span><br><span class="line">firewall-cmd --reload</span><br><span class="line"><span class="meta">#</span><span class="bash"> 防火墙开机自启动</span></span><br><span class="line">systemctl enable firewalld.service</span><br><span class="line"><span class="meta">#</span><span class="bash"> 防火墙取消某一开放端口</span></span><br><span class="line">firewall-cmd --zone=public --remove-port=9200/tcp --permanent</span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁止firewall开机启动</span></span><br><span class="line">systemctl disable firewalld.service </span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 检查6379端口是否开放</span></span><br><span class="line">firewall-cmd --query-port=6379/tcp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 永久开放6379端口</span></span><br><span class="line">firewall-cmd --zone=public --add-port=6379/tcp --permanent</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看防火墙状态：</span></span><br><span class="line">firewall-cmd --state </span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动防火墙</span></span><br><span class="line">systemctl start firewalld</span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭防火墙</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"><span class="meta">#</span><span class="bash"> 检查防火墙开放的端口</span></span><br><span class="line">firewall-cmd --permanent --zone=public --list-ports</span><br><span class="line"><span class="meta">#</span><span class="bash"> 重启防火墙</span></span><br><span class="line">firewall-cmd --reload</span><br><span class="line"><span class="meta">#</span><span class="bash"> 防火墙开机自启动</span></span><br><span class="line">systemctl enable firewalld.service</span><br><span class="line"><span class="meta">#</span><span class="bash"> 防火墙取消某一开放端口</span></span><br><span class="line">firewall-cmd --zone=public --remove-port=9200/tcp --permanent</span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁止firewall开机启动</span></span><br><span class="line">systemctl disable firewalld.service</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>3.如果使用阿里云,记得开放阿里云安全组的端口</p>
@@ -422,9 +422,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(error) NOAUTH Authentication required</span><br></pre></td></tr></table></figure>
 
 <p>此时，可以在/etc/init.d/redisd脚本文件中添加-a密码选项。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加-a 密码选项</span></span><br><span class="line"><span class="meta">$</span><span class="bash">CLIEXEC  -a <span class="string">&#x27;password&#x27;</span> -p <span class="variable">$REDISPORT</span> shutdown</span></span><br></pre></td></tr></table></figure>
-
-
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加-a 密码选项</span></span><br><span class="line"><span class="meta">$</span><span class="bash">CLIEXEC  -a <span class="string">'password'</span> -p <span class="variable">$REDISPORT</span> shutdown</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="5-redis事务"><a href="#5-redis事务" class="headerlink" title="5.redis事务"></a>5.redis事务</h3><h4 id="5-1-MULTI-与-EXEC"><a href="#5-1-MULTI-与-EXEC" class="headerlink" title="5.1 MULTI 与 EXEC"></a>5.1 MULTI 与 EXEC</h4><p>MULTI</p>
 
@@ -542,7 +540,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -575,7 +573,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         
       </div>
@@ -672,7 +672,9 @@
         
           
         
-        <span class="site-state-item-count">41</span>
+          
+        
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -743,7 +745,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2021</span>
+<div class="copyright">  <a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">粵ICP备19091267号 </a>&copy; 2019 – <span itemprop="copyrightYear">2022</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
@@ -752,12 +754,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">574k</span>
+    <span title="站点总字数">629k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:42</span>
+    <span title="站点阅读时长">9:32</span>
 </div>
 
 
@@ -781,7 +783,7 @@
     <span> 人看我的博客啦 </span>
   <span class="post-meta-divider">|</span>
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共161k字</span>
+  <span class="post-count">博客全站共176.7k字</span>
 </div>
 
 
